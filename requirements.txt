@@ -1,0 +1,13 @@
+# Training / development environment (Python 3.13, Windows, CUDA 13.0)
+# torch is installed separately from the CUDA index:
+#   pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu130
+rlcard @ git+https://github.com/datamllab/rlcard.git@d7d0a957baf4cc7225a50522adb0164bf130a9d0
+numpy
+pytest
+hypothesis
+fastapi
+uvicorn[standard]
+httpx
+pydantic>=2
+tqdm
+pandas

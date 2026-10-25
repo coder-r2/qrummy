@@ -1,0 +1,30 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hypothesis/
+
+# Secrets
+.env
+
+# Training artefacts (large / regenerable)
+training/data/
+training/logs/
+models/checkpoints/
+
+# Web
+web/node_modules/
+web/.next/
+web/out/
+
+# Deploy bundle (assembled by CI)
+deploy/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+web/*.tsbuildinfo
+web/next-env.d.ts
