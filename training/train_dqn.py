@@ -40,6 +40,8 @@ CONFIG = dict(
     learning_rate=5e-5,              # run A used 1e-4 and diverged (D-091)
     td_target_clip=True,             # clip TD targets to the bounded true return ±(1 + shaping_coef) (D-091)
     huber_loss=True,                 # smooth-L1 instead of RLCard's MSE (D-091)
+    cql_alpha=0.5,                   # conservative penalty against extrapolation error (D-094); 0 = off
+    ckpt_every_s=900,                # every 15 min: the best policy may come early in the run (D-094)
     batch_size=256,
     replay_memory_size=300_000,
     replay_memory_init_size=1_000,   # buffer is pre-filled with heuristic play (warm start)
@@ -68,7 +70,6 @@ CONFIG = dict(
     eval_rounds_heuristic=400,
     eval_rounds_random=100,
     latest_every_rounds=2_000,
-    ckpt_every_s=1800,
     value_sample_prob=1 / 6,
     value_start_frac=0.3,
     value_shard_size=100_000,
@@ -78,23 +79,31 @@ CONFIG = dict(
 # --------------------------------------------------------------------------- agent
 
 class RingMemory(Memory):
-    """O(1) replay buffer storing observations as float16 (halves RAM)."""
+    """O(1) replay buffer storing observations as float16 (halves RAM). Also keeps each state's own
+    legal actions (RLCard stores only the next state's), which the CQL term needs (D-094)."""
 
     def __init__(self, memory_size, batch_size):
         super().__init__(memory_size, batch_size)
         self.pos = 0
+        self.cur_legal: list[tuple] = []
+        self.last_cur_legal: list[tuple] = []
 
-    def save(self, state, action, reward, next_state, legal_actions, done):
+    def save(self, state, action, reward, next_state, legal_actions, done, cur_legal=()):
         t = Transition(np.asarray(state, dtype=np.float16), int(action), float(reward),
                        np.asarray(next_state, dtype=np.float16), bool(done), tuple(legal_actions))
+        cl = tuple(cur_legal) or (int(action),)
         if len(self.memory) < self.memory_size:
             self.memory.append(t)
+            self.cur_legal.append(cl)
         else:
             self.memory[self.pos] = t
+            self.cur_legal[self.pos] = cl
         self.pos = (self.pos + 1) % self.memory_size
 
     def sample(self):
-        s, a, r, ns, d, la = zip(*random.sample(self.memory, self.batch_size))
+        idx = random.sample(range(len(self.memory)), self.batch_size)
+        s, a, r, ns, d, la = zip(*(self.memory[i] for i in idx))
+        self.last_cur_legal = [self.cur_legal[i] for i in idx]
         return (np.asarray(s, dtype=np.float32), np.asarray(a), np.asarray(r, dtype=np.float32),
                 np.asarray(ns, dtype=np.float32), np.asarray(d, dtype=bool), la)
 
@@ -122,6 +131,17 @@ class QRummyDQNAgent(DQNAgent):
         self.demo_margin = 0.8
         self.td_clip: float | None = None   # |target| bound; None = RLCard's unclipped update
         self.huber = False
+        self.cql_alpha = 0.0                # weight of the CQL(H) penalty on replay batches (D-094)
+
+    def feed(self, ts):
+        """RLCard's feed, but the current state's legal actions are stored too (for CQL)."""
+        state, action, reward, next_state, done = tuple(ts)
+        self.memory.save(state["obs"], action, reward, next_state["obs"],
+                         list(next_state["legal_actions"].keys()), done, list(state["legal_actions"].keys()))
+        self.total_t += 1
+        tmp = self.total_t - self.replay_memory_init_size
+        if tmp >= 0 and tmp % self.train_every == 0:
+            self.train()
 
     def attach_demos(self, demos: dict, margin: float):
         dev = self.device
@@ -152,8 +172,17 @@ class QRummyDQNAgent(DQNAgent):
         s = torch.from_numpy(np.array(state_batch)).float().to(dev)
         a = torch.from_numpy(action_batch).long().to(dev)
         y = torch.from_numpy(target_batch.astype(np.float32)).to(dev)
-        q = est.qnet(s).gather(-1, a.unsqueeze(-1)).squeeze(-1)
+        q_all = est.qnet(s)
+        q = q_all.gather(-1, a.unsqueeze(-1)).squeeze(-1)
         batch_loss = torch.nn.functional.smooth_l1_loss(q, y) if self.huber else est.mse_loss(q, y)
+        if self.cql_alpha > 0:
+            # CQL(H): logsumexp over the state's legal actions minus Q of the action actually taken.
+            # Pushes down rarely-tried legal discards whose Q the max in the target would otherwise inflate.
+            legal = torch.zeros_like(q_all, dtype=torch.bool)
+            for b, acts in enumerate(self.memory.last_cur_legal):
+                legal[b, list(acts)] = True
+            lse = torch.logsumexp(q_all.masked_fill(~legal, -1e9), dim=1)
+            batch_loss = batch_loss + self.cql_alpha * (lse - q).mean()
         if self.demo is not None and self.demo_lambda > 0:
             idx = torch.randint(len(self.demo["a"]), (self.batch_size,), device=dev)
             dq = est.qnet(self.demo["s"][idx].float())
@@ -257,7 +286,7 @@ def warm_start(env, agent: QRummyDQNAgent, n: int, gamma: float, coef: float) ->
         for seat in reorganize_shaped(traj, payoffs, gamma, coef):
             for s, a, r, s2, done in seat:
                 nxt = list(s2["legal_actions"].keys())
-                agent.feed_memory(s["obs"], a, r, s2["obs"], nxt, done)
+                agent.memory.save(s["obs"], a, r, s2["obs"], nxt, done, list(s["legal_actions"].keys()))
                 S.append(s["obs"].astype(np.float16)); A_.append(a); R.append(r)
                 S2.append(s2["obs"].astype(np.float16)); D.append(done)
                 M.append(_mask(s["legal_actions"].keys())); M2.append(_mask(nxt) if nxt else np.ones(NUM_ACTIONS, bool))
@@ -341,6 +370,7 @@ def main():
     if cfg.get("td_target_clip"):
         agent.td_clip = 1.0 + cfg["shaping_coef"]   # |payoff| <= 1 and shaping telescopes to <= coef·max|Φ| = coef
     agent.huber = bool(cfg.get("huber_loss"))
+    agent.cql_alpha = float(cfg.get("cql_alpha", 0.0))
     rounds_done = 0
     if args.resume:
         ck = torch.load(args.resume, map_location=device, weights_only=False)
