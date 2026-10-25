@@ -1,7 +1,7 @@
-# Deploy-time dependencies (HF Space, CPU only). torch is installed in the Dockerfile from the CPU index.
-rlcard @ https://github.com/datamllab/rlcard/archive/d7d0a957baf4cc7225a50522adb0164bf130a9d0.zip
-numpy
-fastapi
-uvicorn[standard]
-httpx
-pydantic>=2
+# Deploy-time dependencies (Render free instance, D-084/D-085). No torch, no rlcard: the server serves
+# NumPy exports of the trained models (indian_rummy/agents/np_models.py).
+numpy==2.5.4
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+httpx==0.28.1
+pydantic==2.14.1

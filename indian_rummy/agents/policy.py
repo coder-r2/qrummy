@@ -15,7 +15,7 @@ from rlcard.agents.dqn_agent import EstimatorNetwork
 
 from .. import actions as A
 from ..features import FEATURE_VERSION, Analysis, encode
-from .heuristic import HeuristicAgent
+from .hybrid import HybridPolicy  # noqa: F401  (re-exported; it lives in a torch-free module)
 
 
 class DQNPolicy:
@@ -64,38 +64,6 @@ class DQNPolicy:
         qs = self.masked_q(state["obs"], state["legal_actions"].keys())
         best = max(qs, key=qs.get)
         return best, {"values": {A.describe(a): v for a, v in qs.items()}}
-
-    def step(self, state):
-        return self.eval_step(state)[0]
-
-
-class HybridPolicy:
-    """DQN chooses among the heuristic's top-k discards (always taking a winning discard);
-    draw/forfeit decisions come from the DQN."""
-
-    use_raw = False
-
-    def __init__(self, dqn: DQNPolicy, k: int = 3):
-        self.dqn = dqn
-        self.k = k
-        self.heuristic = HeuristicAgent()
-
-    def act_analysis(self, an: Analysis, obs: np.ndarray | None = None) -> int:
-        obs = encode(an) if obs is None else obs
-        if an.decision == "discard" and an.discards:
-            ranked = self.heuristic.ranked_discards(an)
-            if an.discards[ranked[0]].win:
-                return A.discard_action(ranked[0])
-            cands = [A.discard_action(t) for t in ranked[:self.k]]
-            if A.FORFEIT in an.legal:
-                cands.append(A.FORFEIT)
-            qs = self.dqn.masked_q(obs, cands)
-            return max(qs, key=qs.get)
-        qs = self.dqn.masked_q(obs, an.legal)
-        return max(qs, key=qs.get)
-
-    def eval_step(self, state):
-        return self.act_analysis(state["raw_obs"]["analysis"], state["obs"]), {}
 
     def step(self, state):
         return self.eval_step(state)[0]

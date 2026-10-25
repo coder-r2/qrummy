@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { wakeServer } from "@/lib/api";
 
-/** Free Hugging Face Spaces sleep when idle; this pings /api/health until it answers. */
+/** The free Render backend sleeps when idle; this pings /api/health until it answers. */
 export function useServerReady() {
   const [ready, setReady] = useState<boolean | null>(null);
   const [secs, setSecs] = useState(0);

@@ -1,0 +1,25 @@
+# Render Blueprint for the backend (D-084). In Render: New -> Blueprint -> pick this repo.
+services:
+  - type: web
+    name: qrummy-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - server/**
+        - indian_rummy/**
+        - models/**
+        - Dockerfile
+        - render.yaml
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://coder-r2.github.io
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false

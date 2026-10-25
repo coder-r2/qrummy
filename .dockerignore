@@ -1,0 +1,10 @@
+**/__pycache__
+.git
+.github
+.venv
+web
+training
+tests
+models/checkpoints
+*.md
+.env

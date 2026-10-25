@@ -1,0 +1,15 @@
+name: Keep the backend awake
+
+# Render's free instance sleeps after 15 min without traffic and takes ~1 min to wake (D-086).
+# A health ping every 10 min keeps it up; one service running 24/7 stays inside the 750 free hours/month.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    if: ${{ vars.NEXT_PUBLIC_API_BASE != '' }}
+    steps:
+      - run: curl -fsS --max-time 90 --retry 2 "${{ vars.NEXT_PUBLIC_API_BASE }}/api/health"

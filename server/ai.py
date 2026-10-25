@@ -2,10 +2,11 @@
 
 models/model_card.json (written in Phase 5) selects the policy per level:
     {"levels": {"easy":   {"type": "heuristic", "epsilon": 0.35, "forfeit": false},
-                "medium": {"type": "dqn", "checkpoint": "models/ckpt_medium.pth"},
-                "hard":   {"type": "hybrid", "checkpoint": "models/dqn_model.pth"}},
-     "coach": {"dqn": "models/dqn_model.pth", "value": "models/value_model.pth"}}
+                "medium": {"type": "dqn", "checkpoint": "models/dqn_medium.npz"},
+                "hard":   {"type": "hybrid", "checkpoint": "models/dqn_model.npz"}},
+     "coach": {"dqn": "models/dqn_model.npz", "value": "models/value_model.npz"}}
 Without a model card every level falls back to heuristic variants, so the server always works.
+`.npz` files load with NumPy only (the deployed path, D-085); `.pt`/`.pth` need torch (local dev).
 """
 
 from __future__ import annotations
@@ -45,8 +46,12 @@ class Models:
             return None
         if rel not in self._dqn:
             try:
-                from indian_rummy.agents.policy import DQNPolicy
-                self._dqn[rel] = DQNPolicy.load(str(ROOT / rel), device="cpu")
+                if rel.endswith(".npz"):
+                    from indian_rummy.agents.np_models import NpDQNPolicy
+                    self._dqn[rel] = NpDQNPolicy.load(str(ROOT / rel))
+                else:
+                    from indian_rummy.agents.policy import DQNPolicy
+                    self._dqn[rel] = DQNPolicy.load(str(ROOT / rel), device="cpu")
             except Exception as e:  # missing / incompatible model -> heuristic fallback
                 log.warning("cannot load DQN %s: %s", rel, e)
                 self._dqn[rel] = None
@@ -63,8 +68,12 @@ class Models:
             rel = self.card.get("coach", {}).get("value")
             if rel:
                 try:
-                    from indian_rummy.agents.value import ValueModel
-                    self._value = ValueModel.load(str(ROOT / rel), device="cpu")
+                    if rel.endswith(".npz"):
+                        from indian_rummy.agents.np_models import NpValueModel
+                        self._value = NpValueModel.load(str(ROOT / rel))
+                    else:
+                        from indian_rummy.agents.value import ValueModel
+                        self._value = ValueModel.load(str(ROOT / rel), device="cpu")
                 except Exception as e:
                     log.warning("cannot load value model %s: %s", rel, e)
         return self._value
@@ -84,7 +93,7 @@ class AIPlayer:
             dqn = models.dqn(spec.get("checkpoint"))
             if dqn is not None:
                 if spec["type"] == "hybrid":
-                    from indian_rummy.agents.policy import HybridPolicy
+                    from indian_rummy.agents.hybrid import HybridPolicy
                     self.policy = HybridPolicy(dqn, k=spec.get("k", 3))
                 else:
                     self.policy = dqn

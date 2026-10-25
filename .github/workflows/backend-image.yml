@@ -1,0 +1,31 @@
+name: Backend image smoke test
+
+# Builds the same Dockerfile Render deploys and checks the container serves a game (D-084).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "indian_rummy/**"
+      - "models/**"
+      - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/backend-image.yml"
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t qrummy-api .
+      - name: Run the container and play an opening
+        run: |
+          docker run -d --name api -p 10000:10000 -e PORT=10000 qrummy-api
+          for i in $(seq 1 30); do curl -fsS localhost:10000/api/health && break; sleep 1; done
+          gid=$(curl -fsS -X POST localhost:10000/api/games -H 'content-type: application/json' \
+                -d '{"mode":"match","difficulty":"hard","coach":"on"}' | python3 -c 'import sys,json; print(json.load(sys.stdin)["view"]["gameId"])')
+          curl -fsS -X POST "localhost:10000/api/games/$gid/hint" | head -c 300; echo
+          docker exec api python -c "import importlib.util as u; assert u.find_spec('torch') is None; print('no torch: ok')"
+      - if: failure()
+        run: docker logs api || true
