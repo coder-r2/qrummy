@@ -20,7 +20,8 @@ log = logging.getLogger("qrummy.llm")
 
 SYSTEM = (
     "You are a friendly Indian Rummy coach. Explain the recommended move to the player in at most "
-    "45 words, plain text, no markdown, no lists. Use ONLY the facts given in the JSON; never invent "
+    "45 words, plain text, no markdown, no lists, no greetings or sign-offs; start with the move itself. "
+    "Use ONLY the facts given in the JSON; never invent "
     "cards, probabilities or rules, and never mention information the player cannot see. "
     "House rules: hands of 13 cards must form melds of exactly 3/3/3/4; the first 'original' rummy must be "
     "a pure sequence or an identical triplet and unlocks the closed joker's wild rank; unmelded cards "
@@ -68,7 +69,7 @@ class GeminiExplainer:
             body = {
                 "systemInstruction": {"parts": [{"text": SYSTEM}]},
                 "contents": [{"role": "user", "parts": [{"text": "Facts: " + blob}]}],
-                "generationConfig": {"temperature": 0.4, "maxOutputTokens": 120},
+                "generationConfig": {"temperature": 0.4, "maxOutputTokens": 200},
             }
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 r = await client.post(url, json=body, headers={"x-goog-api-key": self.key})
@@ -76,8 +77,11 @@ class GeminiExplainer:
                 log.warning("gemini HTTP %s: %s", r.status_code, r.text[:200])
                 return None
             data = r.json()
-            text = "".join(p.get("text", "") for p in data["candidates"][0]["content"]["parts"]).strip()
-            if not text:
+            cand = data["candidates"][0]
+            text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", [])).strip()
+            if not text or cand.get("finishReason") not in (None, "STOP"):
+                # a reply cut off by the token limit (or blocked) is worse than the template text
+                log.warning("gemini unusable reply: finishReason=%s", cand.get("finishReason"))
                 return None
             self.cache[key] = text
             if len(self.cache) > 2000:
