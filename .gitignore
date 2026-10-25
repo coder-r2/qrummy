@@ -28,3 +28,4 @@ Thumbs.db
 .idea/
 web/*.tsbuildinfo
 web/next-env.d.ts
+training/*.log

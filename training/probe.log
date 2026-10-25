@@ -1,9 +1,0 @@
-﻿collected 40002 demos in 188s
-  pretrain 0/3000 td 0.3910 margin 1.1340
-  pretrain 1000/3000 td 0.1385 margin 0.3801
-  pretrain 2000/3000 td 0.1183 margin 0.2047
-steps=3000 layers=[512, 512, 256] lr=0.0001: agree 0.683 (discards 0.418) | vs heuristic win 0.325 diff -11.8 | 78s
-  pretrain 0/10000 td 0.4391 margin 1.1996
-  pretrain 1000/10000 td 0.1340 margin 0.3577
-  pretrain 2000/10000 td 0.0997 margin 0.2078
-  pretrain 3000/10000 td 0.0855 margin 0.1113
