@@ -1,0 +1,52 @@
+name: Deploy backend to Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "indian_rummy/**"
+      - "models/*.pth"
+      - "models/model_card.json"
+      - "hf_space/**"
+      - ".github/workflows/hf-sync.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: hf-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble Space bundle
+        run: |
+          mkdir -p bundle/models
+          cp -r indian_rummy server bundle/
+          cp hf_space/Dockerfile hf_space/README.md bundle/
+          cp models/*.pth models/model_card.json bundle/models/ 2>/dev/null || true
+          find bundle -name "__pycache__" -type d -prune -exec rm -rf {} +
+          ls -R bundle | head -50
+
+      - name: Upload to the Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ vars.HF_SPACE }}
+        run: |
+          if [ -z "$HF_TOKEN" ] || [ -z "$HF_SPACE" ]; then
+            echo "::notice::HF_TOKEN / HF_SPACE not configured yet; skipping the Space deploy."
+            exit 0
+          fi
+          pip install --quiet "huggingface_hub>=0.30"
+          python - <<'EOF'
+          import os
+          from huggingface_hub import HfApi
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          api.upload_folder(folder_path="bundle", repo_id=os.environ["HF_SPACE"], repo_type="space",
+                            commit_message=f"deploy {os.environ.get('GITHUB_SHA', '')[:7]}",
+                            delete_patterns=["indian_rummy/**", "server/**", "models/**"])
+          print("uploaded")
+          EOF
