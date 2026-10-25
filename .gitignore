@@ -29,3 +29,8 @@ Thumbs.db
 web/*.tsbuildinfo
 web/next-env.d.ts
 training/*.log
+
+# internal docs stay local (user rule): no .md except READMEs
+*.md
+!README.md
+!**/README.md
