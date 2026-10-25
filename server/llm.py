@@ -1,6 +1,6 @@
 """Gemini explanations with template fallback (SPEC §6.3, D-037).
 
-Env: GEMINI_API_KEY, GEMINI_MODEL, LLM_RATE_PER_MIN (default 10), LLM_TIMEOUT_S (default 4).
+Env: GEMINI_API_KEY, GEMINI_MODEL, LLM_RATE_PER_MIN (default 10), LLM_TIMEOUT_S (default 8).
 Never raises: any problem returns None and the caller keeps the template text.
 """
 
@@ -34,7 +34,8 @@ class GeminiExplainer:
         self.key = os.environ.get("GEMINI_API_KEY", "").strip()
         self.model = os.environ.get("GEMINI_MODEL", "").strip()
         self.rate = float(os.environ.get("LLM_RATE_PER_MIN", "10"))
-        self.timeout = float(os.environ.get("LLM_TIMEOUT_S", "4"))
+        # 8 s: the UI shows the template at once and swaps in this text when it lands (D-090)
+        self.timeout = float(os.environ.get("LLM_TIMEOUT_S", "8"))
         self.cache: OrderedDict[str, str] = OrderedDict()
         self.tokens = self.rate
         self.last = time.monotonic()

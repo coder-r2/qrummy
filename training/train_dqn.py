@@ -37,7 +37,9 @@ from training.evaluate import evaluate  # noqa: E402
 
 CONFIG = dict(
     mlp_layers=[512, 512, 256],
-    learning_rate=1e-4,
+    learning_rate=5e-5,              # run A used 1e-4 and diverged (D-091)
+    td_target_clip=True,             # clip TD targets to the bounded true return ±(1 + shaping_coef) (D-091)
+    huber_loss=True,                 # smooth-L1 instead of RLCard's MSE (D-091)
     batch_size=256,
     replay_memory_size=300_000,
     replay_memory_init_size=1_000,   # buffer is pre-filled with heuristic play (warm start)
@@ -46,7 +48,7 @@ CONFIG = dict(
     pretrain_margin=0.8,
     pretrain_lambda=1.0,
     demo_lambda_start=1.0,           # DQfD margin loss kept during RL (D-065) ...
-    demo_lambda_end=0.1,             # ... decayed linearly ...
+    demo_lambda_end=0.5,             # ... decayed linearly (run A: 0.1) ...
     demo_lambda_decay_frac=0.6,      # ... over the first 60% of the budget
     update_target_estimator_every=2_000,
     discount_factor=0.99,
@@ -118,6 +120,8 @@ class QRummyDQNAgent(DQNAgent):
         self.demo: dict | None = None
         self.demo_lambda = 0.0
         self.demo_margin = 0.8
+        self.td_clip: float | None = None   # |target| bound; None = RLCard's unclipped update
+        self.huber = False
 
     def attach_demos(self, demos: dict, margin: float):
         dev = self.device
@@ -138,6 +142,8 @@ class QRummyDQNAgent(DQNAgent):
         q_values_next_target = self.target_estimator.predict_nograd(next_state_batch)
         target_batch = reward_batch + np.invert(done_batch).astype(np.float32) * \
             self.discount_factor * q_values_next_target[np.arange(self.batch_size), best_actions]
+        if self.td_clip is not None:
+            target_batch = np.clip(target_batch, -self.td_clip, self.td_clip)
 
         est = self.q_estimator
         dev = self.device
@@ -147,7 +153,7 @@ class QRummyDQNAgent(DQNAgent):
         a = torch.from_numpy(action_batch).long().to(dev)
         y = torch.from_numpy(target_batch.astype(np.float32)).to(dev)
         q = est.qnet(s).gather(-1, a.unsqueeze(-1)).squeeze(-1)
-        batch_loss = est.mse_loss(q, y)
+        batch_loss = torch.nn.functional.smooth_l1_loss(q, y) if self.huber else est.mse_loss(q, y)
         if self.demo is not None and self.demo_lambda > 0:
             idx = torch.randint(len(self.demo["a"]), (self.batch_size,), device=dev)
             dq = est.qnet(self.demo["s"][idx].float())
@@ -280,10 +286,12 @@ def pretrain(agent: QRummyDQNAgent, demos: dict, steps: int, margin: float, lam:
             qnet.eval()
             best = qnet(s2).masked_fill(~m2, -1e9).argmax(1)
             target = r + gamma * (1 - d) * tnet(s2).gather(1, best[:, None]).squeeze(1)
+            if agent.td_clip is not None:
+                target = target.clamp(-agent.td_clip, agent.td_clip)
         qnet.train()
         q = qnet(s)
         qa = q.gather(1, a[:, None]).squeeze(1)
-        td = torch.nn.functional.mse_loss(qa, target)
+        td = (torch.nn.functional.smooth_l1_loss if agent.huber else torch.nn.functional.mse_loss)(qa, target)
         large_margin = large_margin_loss(q, a, m, margin)
         loss = td + lam * large_margin
         opt.zero_grad()
@@ -330,6 +338,9 @@ def main():
         batch_size=cfg["batch_size"], num_actions=env.num_actions, state_shape=env.state_shape[0],
         train_every=cfg["train_every"], mlp_layers=cfg["mlp_layers"],
         learning_rate=cfg["learning_rate"], device=device)
+    if cfg.get("td_target_clip"):
+        agent.td_clip = 1.0 + cfg["shaping_coef"]   # |payoff| <= 1 and shaping telescopes to <= coef·max|Φ| = coef
+    agent.huber = bool(cfg.get("huber_loss"))
     rounds_done = 0
     if args.resume:
         ck = torch.load(args.resume, map_location=device, weights_only=False)
