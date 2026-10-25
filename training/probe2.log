@@ -1,0 +1,24 @@
+﻿collected 60004 demos in 303s
+  pretrain 0/6000 td 0.3939 margin 1.1459
+  pretrain 1000/6000 td 0.1376 margin 0.3852
+  pretrain 2000/6000 td 0.1072 margin 0.2706
+  pretrain 3000/6000 td 0.1092 margin 0.1897
+  pretrain 4000/6000 td 0.0828 margin 0.1665
+  pretrain 5000/6000 td 0.0860 margin 0.1093
+steps=6000 layers=[512, 512, 256] lr=0.0001: agree 0.697 (discards 0.446) | vs heuristic win 0.365 diff -7.6 | 130s
+  pretrain 0/15000 td 0.4310 margin 1.2090
+  pretrain 1000/15000 td 0.1348 margin 0.4044
+  pretrain 2000/15000 td 0.1162 margin 0.2802
+  pretrain 3000/15000 td 0.1106 margin 0.2389
+  pretrain 4000/15000 td 0.0860 margin 0.1343
+  pretrain 5000/15000 td 0.0620 margin 0.0885
+  pretrain 6000/15000 td 0.0805 margin 0.0581
+  pretrain 7000/15000 td 0.0655 margin 0.0405
+  pretrain 8000/15000 td 0.0706 margin 0.0226
+  pretrain 9000/15000 td 0.1056 margin 0.0316
+  pretrain 10000/15000 td 0.0726 margin 0.0310
+  pretrain 11000/15000 td 0.0853 margin 0.0327
+  pretrain 12000/15000 td 0.1119 margin 0.0396
+  pretrain 13000/15000 td 0.0936 margin 0.0150
+  pretrain 14000/15000 td 0.1045 margin 0.0237
+steps=15000 layers=[512, 512, 256] lr=0.0001: agree 0.689 (discards 0.442) | vs heuristic win 0.335 diff -10.3 | 240s
