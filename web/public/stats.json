@@ -1,0 +1,35 @@
+{
+ "version": 1,
+ "agent": "heuristic",
+ "rounds": 3000,
+ "illegal": 0,
+ "decided_pct": 99.9,
+ "forfeit_pct": 0.1,
+ "first_player_win_pct": 53.2,
+ "dealt_original_pct": 35.3,
+ "reveal_turn_median": 1,
+ "reveal_turn_p75": 3,
+ "never_reveal_pct": 10.7,
+ "never_reveal_win_pct": 7.8,
+ "first_reveal_win_pct": 67.9,
+ "reveal_lead_win_pct": {
+  "1-2": 62.4,
+  "3-5": 71.6,
+  "6+": 74.0
+ },
+ "reveal_lead_rounds": {
+  "1-2": 1076,
+  "3-5": 992,
+  "6+": 381
+ },
+ "original_kind_pct": {
+  "seq3": 94.6,
+  "seq4": 0.0,
+  "triplet": 5.4
+ },
+ "loser_post_points_mean": 21.2,
+ "loser_post_points_median": 15,
+ "open_draw_pct": 25.2,
+ "round_turns_median": 13.0,
+ "printed_joker_cj_pct": 3.7
+}
