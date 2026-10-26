@@ -39,7 +39,8 @@ flowchart LR
 
 ### The AI
 
-The DQN (RLCard, PyTorch) chooses draws, discards and forfeits. The solver handles meld arrangement,
+The DQN ([RLCard](https://github.com/datamllab/rlcard) [Zha et al., IJCAI 2020](#acknowledgements), PyTorch)
+chooses draws, discards and forfeits. The solver handles meld arrangement,
 the reveal and the declaration.
 
 1. **Imitation (DQfD).** The network first learns from the heuristic's games, using a large-margin
@@ -103,6 +104,27 @@ python training/train_value.py --data training/data/C   # value net from states 
 python training/evaluate.py --a models/checkpoints/C/pretrained.pt --b heuristic --rounds 4000
 python training/export_models.py --dqn models/checkpoints/C/pretrained.pt --out models/dqn_model.npz
 python training/export_models.py --value models/value_model.pth --out models/value_model.npz
+```
+
+## Acknowledgements
+
+The agent is built on **[RLCard](https://github.com/datamllab/rlcard)** (MIT licence): its environment
+interface and DQN agent, which `training/train_dqn.py` extends (ring replay buffer, DQfD margin loss, CQL
+penalty). The Indian Rummy environment in `indian_rummy/rlcard_env.py` is registered with RLCard.
+If you build on this work, please cite RLCard:
+
+> Daochen Zha, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen, Ruzhe Wei,
+> Junyu Guo and Xia Hu. **RLCard: A Platform for Reinforcement Learning in Card Games.** In *Proceedings of
+> IJCAI*, 2020.
+
+```bibtex
+@inproceedings{zha2020rlcard,
+  title={RLCard: A Platform for Reinforcement Learning in Card Games},
+  author={Zha, Daochen and Lai, Kwei-Herng and Huang, Songyi and Cao, Yuanpu and Reddy, Keerthana and Vargas,
+          Juan and Nguyen, Alex and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
+  booktitle={IJCAI},
+  year={2020}
+}
 ```
 
 ## Deployment

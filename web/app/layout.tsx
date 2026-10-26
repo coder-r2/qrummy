@@ -24,7 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MotionPrefs>{children}</MotionPrefs>
         </main>
         <footer className="border-t border-line text-muted text-xs px-4 py-4 text-center">
-          QRummy · RL agent trained with RLCard DQN · Open source, $0 build
+          QRummy · RL agent trained with{" "}
+          <a href="https://github.com/datamllab/rlcard" className="underline hover:text-ink" target="_blank" rel="noreferrer">
+            RLCard
+          </a>{" "}
+          (Zha et al., IJCAI 2020) · $0 build
         </footer>
       </body>
     </html>

@@ -90,6 +90,14 @@ export default function Home() {
             </li>
           ))}
         </ol>
+        <p className="mt-6 text-xs text-muted leading-relaxed max-w-prose">
+          Built with{" "}
+          <a href="https://github.com/datamllab/rlcard" className="underline hover:text-ink" target="_blank" rel="noreferrer">
+            RLCard
+          </a>{" "}
+          (MIT licence): D. Zha, K.-H. Lai, S. Huang, Y. Cao, K. Reddy, J. Vargas, A. Nguyen, R. Wei, J. Guo and X. Hu,{" "}
+          <i>RLCard: A Platform for Reinforcement Learning in Card Games</i>, IJCAI 2020.
+        </p>
       </section>
     </div>
   );
