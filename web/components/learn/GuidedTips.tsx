@@ -17,9 +17,9 @@ function tipFor(v: GameView, seen: Set<string>): Tip | null {
   if (v.phase === "your_draw" && !v.you.postOriginal && v.legal.drawOpen)
     return t("open-ok", "The open card completes an original!", "This open card makes a pure sequence or triplet with your cards — take it, and you'll reveal at the end of this turn.");
   if (v.phase === "your_discard")
-    return t("discard", "Now discard", "Every turn ends with a discard. Throw a card that isn't helping any meld, ideally a high one (A, K, Q, J score 10).");
+    return t("discard", "Now discard", "Every turn ends with a discard. Throw a card that isn't helping any rummy, ideally a high one (A, K, Q, J score 10).");
   if (v.you.postOriginal && typeof v.you.wildRank === "number")
-    return t("wild", "Wild cards unlocked", "Every card of the wild rank now works like a joker for you, and scores 0 if left unmelded.");
+    return t("wild", "Wild cards unlocked", "Every card of the wild rank now works like a joker for you, and scores 0 even if it's left loose.");
   if (v.ai.postOriginal)
     return t("ai-orig", "The AI revealed", "The AI has its original now and can use its own wild rank. Watch which cards it picks up.");
   return null;

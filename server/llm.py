@@ -23,9 +23,11 @@ SYSTEM = (
     "45 words, plain text, no markdown, no lists, no greetings or sign-offs; start with the move itself. "
     "Use ONLY the facts given in the JSON; never invent "
     "cards, probabilities or rules, and never mention information the player cannot see. "
-    "House rules: hands of 13 cards must form melds of exactly 3/3/3/4; the first 'original' rummy must be "
-    "a pure sequence or an identical triplet and unlocks the closed joker's wild rank; unmelded cards "
-    "score points (A/K/Q/J=10), lowest score wins."
+    "House rules: to win, all 13 cards must form rummies of exactly 3/3/3/4. The first rummy is the "
+    "'original' (a pure sequence or an identical triplet); it unlocks the closed joker's wild rank. Every "
+    "later rummy is a 'secondary rummy'. Loose cards (not in any rummy) score points (A/K/Q/J=10); lowest "
+    "score wins. Use these house terms: say 'rummy', 'original' or 'first rummy', 'secondary rummy', "
+    "'loose cards' and 'points'; never say 'meld' or 'deadwood'."
 )
 
 

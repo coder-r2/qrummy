@@ -12,7 +12,7 @@ type Tab = "guided" | "puzzles" | "strategy";
 
 const TABS: { id: Tab; name: string; blurb: string }[] = [
   { id: "guided", name: "Guided round", blurb: "One round against the Easy AI with the coach always on and tips as you go." },
-  { id: "puzzles", name: "Puzzles", blurb: "Quick quizzes on originals, melds, discards and scoring." },
+  { id: "puzzles", name: "Puzzles", blurb: "Quick quizzes on originals, secondary rummies, discards and scoring." },
   { id: "strategy", name: "Strategy notes", blurb: "What the trained AI learned, in plain words." },
 ];
 

@@ -85,6 +85,17 @@ def _remove_slot(slots: tuple[int, ...], size: int) -> tuple[int, ...] | None:
     return tuple(lst)
 
 
+def _fit_slot(slots: tuple[int, ...], size: int) -> tuple[int, ...] | None:
+    """Scoring only (R7.3): a meld may sit in a slot at least its size, so a loser may count
+    3/3/3/3 with one card left over. Taking the exact size first never loses (a bigger slot holds more)."""
+    for s in sorted(slots):
+        if s >= size:
+            lst = list(slots)
+            lst.remove(s)
+            return tuple(lst)
+    return None
+
+
 def _first(N: bytes) -> int:
     return len(N) - len(N.lstrip(b"\x00"))
 
@@ -123,7 +134,7 @@ def _dead(tbl: _Table, N: bytes, W: int, slots: tuple[int, ...]) -> int:
         for p in tbl.pbt[i]:
             if p.wilds > W:
                 continue
-            s2 = _remove_slot(slots, p.size)
+            s2 = _fit_slot(slots, p.size)
             if s2 is None:
                 continue
             N2 = _take(N, p.nat)
@@ -160,7 +171,7 @@ def _dead_path(tbl: _Table, N: bytes, W: int, slots: tuple[int, ...]):
             melds.append(choice)
             N = _take(N, choice.nat)
             W -= choice.wilds
-            slots = _remove_slot(slots, choice.size)
+            slots = _fit_slot(slots, choice.size)
     return melds, uncovered
 
 

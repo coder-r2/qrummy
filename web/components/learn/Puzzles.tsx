@@ -23,7 +23,7 @@ type Puzzle = {
 const TYPES: { id: Puzzle["type"] | "all"; label: string }[] = [
   { id: "all", label: "Mixed" },
   { id: "valid_original", label: "Originals" },
-  { id: "valid_meld", label: "Melds & wilds" },
+  { id: "valid_meld", label: "Rummies & wilds" },
   { id: "best_discard", label: "Best discard" },
   { id: "score_hand", label: "Scoring" },
 ];

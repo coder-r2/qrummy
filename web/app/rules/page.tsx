@@ -13,7 +13,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 const TOC = [
   ["setup", "Setup"],
-  ["melds", "Melds"],
+  ["rummies", "Rummies"],
   ["jokers", "Jokers & wild cards"],
   ["original", "The original rummy"],
   ["turn", "Your turn"],
@@ -38,7 +38,7 @@ export default function Rules() {
       <article>
         <h1 className="font-display text-4xl font-bold mb-2">How to play</h1>
         <p className="text-muted mb-4">
-          QRummy plays a two-player house variant of Indian Rummy. Lowest score wins: you want to meld your whole hand
+          QRummy plays a two-player house variant of Indian Rummy. Lowest score wins: you want to arrange your whole hand into rummies
           before the AI does.
         </p>
 
@@ -55,8 +55,9 @@ export default function Rules() {
           </p>
         </Section>
 
-        <Section id="melds" title="Melds">
-          <p>Every meld has exactly <b>3 or 4 cards</b>.</p>
+        <Section id="rummies" title="Rummies">
+          <p>A <b>rummy</b> is a valid group of exactly <b>3 or 4 cards</b>. Your first one is the <b>original</b>; every
+          rummy after it is a <b>secondary rummy</b>.</p>
           <p>
             <b>Sequence</b> — consecutive cards of one suit. The Ace can be low or high, but sequences can't wrap around.
           </p>
@@ -80,11 +81,11 @@ export default function Rules() {
 
         <Section id="jokers" title="Jokers & wild cards">
           <p>
-            <b>Printed jokers</b> can stand in for any card in a sequence or set, for everyone, at any time — but never in
+            <b>Printed jokers</b> can stand in for any card in a secondary sequence or set, for everyone, at any time — but never in
             your original rummy, and never in a triplet. Once you know the wild rank, every card of that rank (any suit) works
             the same way for you, and can also still be used as itself.
           </p>
-          <p>A meld may contain any number of wild cards, but it needs at least one ordinary card.</p>
+          <p>A secondary rummy may contain any number of wild cards, but it needs at least one ordinary card.</p>
           <div>
             <CardRow codes="5C JK 7C" ok caption="joker as 6♣" />
             <CardRow codes="KH KS JK" ok caption="joker in a set" />
@@ -93,7 +94,7 @@ export default function Rules() {
           </div>
         </Section>
 
-        <Section id="original" title="The original rummy">
+        <Section id="original" title="The original (first rummy)">
           <p>
             Your first rummy — the <b>original</b> — must be a <b>pure sequence</b> (no jokers or wilds) or a <b>triplet</b>.
             Until you have one you are <i>pre-original</i>: you may only take the open discard if it completes your
@@ -129,7 +130,7 @@ export default function Rules() {
 
         <Section id="winning" title="Winning a round">
           <p>
-            After your discard, if your 13 cards split into melds of exactly <b>3 + 3 + 3 + 4</b> — including your original —
+            After your discard, if your 13 cards split into rummies of exactly <b>3 + 3 + 3 + 4</b> — your original plus three secondary rummies —
             you win the round immediately. You can even complete your original and win in the same turn, but then only
             printed jokers count as wild (you haven't seen the closed joker yet).
           </p>
@@ -146,8 +147,9 @@ export default function Rules() {
             <li>The winner scores 0.</li>
             <li>A loser with no original scores <b>80</b>.</li>
             <li>
-              A loser with an original scores the points of cards left out of melds (best arrangement, within the 3/3/3/4 shape),
-              up to a maximum of <b>80</b>.
+              A loser with an original scores the points of the loose cards left out of their rummies (best arrangement),
+              up to a maximum of <b>80</b>. Up to four rummies count, the original included, and at most one of them may
+              have 4 cards — so <b>3 + 3 + 3 + 3</b> with a single loose card is allowed, and only that card scores.
             </li>
             <li>A, K, Q, J = 10 · 2–10 = face value · jokers = 0 · wild-rank cards = 0 once you know the wild rank.</li>
           </ul>

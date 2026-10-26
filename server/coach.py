@@ -121,7 +121,7 @@ class Coach:
             if an.open_best_points is not None and an.current is not None:
                 gain = an.current.points - an.open_best_points
                 if gain > 0:
-                    tags.append(f"reduces_deadwood:{gain}")
+                    tags.append(f"reduces_points:{gain}")
             tags.append("reveals_card_to_opponent")
             return tags
         if a == A.DRAW_CLOSED:
@@ -138,7 +138,7 @@ class Coach:
             tags.append("discards_wild")
         in_meld = an.current is not None and any(t in m for m in an.current.melds)
         if in_meld:
-            tags.append("breaks_meld")
+            tags.append("breaks_rummy")
         elif base_points(t) >= 10:
             tags.append("sheds_high_card")
         seen = int(an.dead[t]) + (1 if an.top == t else 0)
@@ -146,7 +146,7 @@ class Coach:
             tags.append(f"dead_card:{seen}")
         if t != JOKER and self._opponent_collecting(an, t):
             tags.append("opponent_may_want")
-        tags.append(f"deadwood_after:{d.points}")
+        tags.append(f"points_after:{d.points}")
         if d.outs:
             tags.append(f"outs:{d.outs}")
         return tags
@@ -182,10 +182,10 @@ class Coach:
             parts.append("it completes your original rummy, unlocking the closed joker")
         if "keeps_original" in tagset:
             parts.append("you keep a valid original to reveal")
-        if "reduces_deadwood" in tagset:
-            parts.append(f"it cuts your unmelded points by {tagset['reduces_deadwood']}")
+        if "reduces_points" in tagset:
+            parts.append(f"it cuts the points of your loose cards by {tagset['reduces_points']}")
         if "sheds_high_card" in tagset:
-            parts.append("it sheds a high-value card that isn't helping any meld")
+            parts.append("it sheds a high-value card that isn't helping any rummy")
         if "dead_card" in tagset:
             parts.append(f"{tagset['dead_card']} cop{'y' if tagset['dead_card'] == '1' else 'ies'} of it "
                          "are already gone, so it's hard to build around")
@@ -193,8 +193,8 @@ class Coach:
             parts.append(f"about {tagset['outs']} unseen cards would still improve your hand")
         if "opponent_may_want" in tagset:
             parts.append("careful: the AI has picked up cards near this one")
-        if "breaks_meld" in tagset:
-            parts.append("note it breaks one of your current melds")
+        if "breaks_rummy" in tagset:
+            parts.append("note it breaks one of your current rummies")
         if "discards_wild" in tagset:
             parts.append("throwing a wild card is usually a mistake")
         if "unknown_card" in tagset:
@@ -284,9 +284,9 @@ class Coach:
             "phase": "post_original" if an.post_original else "pre_original",
             "decision": an.decision,
             "wild_rank": an.wild_rank,
-            "hand_melds": [[card_name(t) for t in m] for m in (cur.melds if cur else [])],
-            "unmelded": [card_name(t) for t in (cur.uncovered if cur else [])],
-            "unmelded_points": cur.points if cur else None,
+            "hand_rummies": [[card_name(t) for t in m] for m in (cur.melds if cur else [])],
+            "loose_cards": [card_name(t) for t in (cur.uncovered if cur else [])],
+            "loose_points": cur.points if cur else None,
             "open_card": card_name(an.top) if an.top is not None else None,
             "recommended": {"move": rows[0]["label"], "win_pct": rows[0]["winProbability"], "tags": rows[0]["tags"]},
             "alternatives": [{"move": r["label"], "win_pct": r["winProbability"], "tags": r["tags"][:3]}

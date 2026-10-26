@@ -67,7 +67,7 @@ export default function Strategy() {
       )}
       <Note n={1} title="Race to your original">
         <p>
-          Nothing matters more early on. Until you reveal, your other melds can&apos;t use wild cards and a loss costs the full
+          Nothing matters more early on. Until you reveal, your secondary rummies can&apos;t use wild cards and a loss costs the full
           80 points. {s && <>In {s.rounds.toLocaleString()} self-play rounds, the player who revealed first won {v(s.first_reveal_win_pct)} of the time, and a player who never revealed won only {v(s.never_reveal_win_pct)}.</>}
         </p>
         <p>
@@ -78,7 +78,7 @@ export default function Strategy() {
       </Note>
       <Note n={2} title="Three cards beat four">
         <p>
-          A 3-card original frees one more card for your other melds, and the 3·3·3·4 template only has one 4-card slot.
+          A 3-card original frees one more card for your secondary rummies, and a 3·3·3·4 win only has one 4-card slot.
           {s?.original_kind_pct && <> The AI chose a 3-card sequence {v(s.original_kind_pct.seq3)} of the time and a triplet {v(s.original_kind_pct.triplet)}.</>} If a natural 4th card arrives later, it extends the original automatically.
         </p>
       </Note>
@@ -93,7 +93,7 @@ export default function Strategy() {
       <Note n={4} title="Wilds are worth more than points">
         <p>
           Once you&apos;ve revealed, every card of the wild rank and every printed joker scores 0 and fills any gap. Never throw one
-          away unless it wins you the round. A wild only helps a meld that already has a natural card, so pair it with a
+          away unless it wins you the round. A wild only helps a rummy that already has a natural card, so pair it with a
           real card early.
         </p>
       </Note>

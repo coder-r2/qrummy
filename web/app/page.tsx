@@ -78,7 +78,7 @@ export default function Home() {
         <h2 className="font-display text-2xl font-bold mb-4">How the AI works</h2>
         <ol className="grid md:grid-cols-4 gap-4 text-sm">
           {[
-            ["Rules engine", "A Python engine validates every meld, joker and phase rule; a fast solver finds the best arrangement of any hand."],
+            ["Rules engine", "A Python engine validates every rummy, joker and phase rule; a fast solver finds the best arrangement of any hand."],
             ["Learning", "The DQN learns by imitating a strong hand-written strategy, then plays itself. In our tests the imitation stage gave the strongest network, so that is the one you meet."],
             ["Decisions", "Each turn it scores every legal draw and discard (its Q-values) from what it can legally see — never your cards."],
             ["Coaching", "A separate value network estimates your win chance; Gemini turns the facts into a short explanation."],

@@ -28,12 +28,16 @@ def _oracle_dead(cards: tuple, slots: tuple, wild):
         return 0
     first, rest = cards[0], cards[1:]
     best = card_points(first, wild) + _oracle_dead(rest, slots, wild)
-    for size in set(slots):
-        for combo in combinations(range(len(rest)), size - 1):
-            group = [first] + [rest[i] for i in combo]
-            if is_secondary(group, wild):
-                remaining = tuple(rest[i] for i in range(len(rest)) if i not in combo)
-                best = min(best, _oracle_dead(remaining, _remove(slots, size), wild))
+    # Scoring lets a meld sit in any slot at least its size (3/3/3/3 + 1 card, R7.3); try every pairing.
+    for slot in set(slots):
+        for size in (3, 4):
+            if size > slot:
+                continue
+            for combo in combinations(range(len(rest)), size - 1):
+                group = [first] + [rest[i] for i in combo]
+                if is_secondary(group, wild):
+                    remaining = tuple(rest[i] for i in range(len(rest)) if i not in combo)
+                    best = min(best, _oracle_dead(remaining, _remove(slots, slot), wild))
     return best
 
 
@@ -227,6 +231,16 @@ def test_r7_3_template_limits_partial_melds():
     # best: orig(3) + 9C-QC (4) + 3S-5S (3); leftovers 2S + KD + 8D = 20
     assert sorted(len(m) for m in a.melds) == [3, 3, 4]
     assert a.points == 20
+
+
+def test_r7_3_loser_may_count_four_three_card_melds():
+    # orig + three 3-card melds + one loose card: only the 8D counts (3/3/3/3 + 1).
+    hand = counts_of(T("5H 6H 7H 2S 2D 2C 9C 10C JC KS KD KC 8D"))
+    ctx = HandContext(post_original=True, locked=tuple(T("5H 6H 7H")))
+    a = solve(hand, ctx)
+    assert sorted(len(m) for m in a.melds) == [3, 3, 3, 3]
+    assert a.uncovered == T("8D") and a.points == 8
+    assert is_win(hand, ctx) is None  # still not a win: that needs exactly 3/3/3/4
 
 
 def test_r7_5_wild_rank_cards_score_zero_post_original():

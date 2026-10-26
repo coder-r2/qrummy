@@ -93,7 +93,7 @@ function Groups({ hand, groups, wild }: { hand: Card[]; groups: number[][]; wild
         </div>
       ))}
       {loose.length > 0 && (
-        <div className="flex flex-wrap gap-0.5 rounded-lg bg-bad/10 border border-bad/30 p-1" title="Unmelded cards (count against you)">
+        <div className="flex flex-wrap gap-0.5 rounded-lg bg-bad/10 border border-bad/30 p-1" title="Loose cards, not in any rummy (they count against you)">
           {loose.map((c) => (
             <PlayingCard key={c.id} card={c} width={38} />
           ))}

@@ -99,7 +99,7 @@ def p_valid_meld(rng, k):
     ans = opts.index(good[0])
     return {
         "id": f"meld-{k}", "type": "valid_meld",
-        "prompt": f"You've revealed your original and the wild rank is {rname(wild)}. Which group is a valid meld?",
+        "prompt": f"You've revealed your original and the wild rank is {rname(wild)}. Which group is a valid secondary rummy?",
         "wildRank": wild,
         "options": [codes(o) for o in opts],
         "answer": ans,
@@ -136,7 +136,7 @@ def p_best_discard(an, ranked, rng, k):
 
     def why(t):
         d = an.discards[t]
-        bits = [f"leaves {d.points} unmelded points", f"{d.outs} unseen cards would help"]
+        bits = [f"leaves {d.points} points in loose cards", f"{d.outs} unseen cards would help"]
         if not an.post_original:
             bits.insert(0, "keeps your original" if d.has_original else "breaks your only original")
         if an.is_wild(t):
@@ -174,7 +174,7 @@ def p_score(an, rng, k):
         "answer": opts.index(pts),
         "melds": [codes(m) for m in arr.melds],
         "unmelded": codes(arr.uncovered),
-        "explanations": [f"Best arrangement leaves {codes(arr.uncovered) or 'nothing'} unmelded = {arr.points} points"
+        "explanations": [f"Best arrangement leaves {codes(arr.uncovered) or 'nothing'} loose = {arr.points} points"
                          + (" (capped at 80)" if arr.points > 80 else "")] * len(opts),
     }
 

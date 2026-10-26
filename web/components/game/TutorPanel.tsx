@@ -9,18 +9,18 @@ const TAG_TEXT: Record<string, string> = {
   completes_win: "wins the round",
   completes_original: "completes original",
   keeps_original: "keeps original",
-  reduces_deadwood: "fewer points",
+  reduces_points: "fewer points",
   sheds_high_card: "sheds high card",
   dead_card: "dead card",
   opponent_may_want: "AI may want it",
-  breaks_meld: "breaks a meld",
+  breaks_rummy: "breaks a rummy",
   discards_wild: "throws a wild!",
   unknown_card: "unknown card",
   keeps_plans_hidden: "hides your plan",
   reveals_card_to_opponent: "shows your hand",
   forfeit_fixed_40: "fixed 40 pts",
   outs: "outs",
-  deadwood_after: "points left",
+  points_after: "points left",
 };
 
 function tagLabel(t: string) {
@@ -127,7 +127,7 @@ export default function TutorPanel({
                 </div>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {a.tags
-                    .filter((t) => !t.startsWith("deadwood_after"))
+                    .filter((t) => !t.startsWith("points_after"))
                     .slice(0, 4)
                     .map((t) => (
                       <span key={t} className="px-1.5 py-0.5 rounded bg-panel-2 text-[11px] text-muted">
