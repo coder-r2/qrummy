@@ -2,6 +2,8 @@
 FROM python:3.13-slim
 
 ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+# Render's free tier is 0.1 CPU; OpenBLAS would start one thread per host core and thrash the quota.
+ENV OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
 WORKDIR /app
 
 COPY server/requirements.txt /app/server/requirements.txt
