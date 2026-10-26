@@ -73,6 +73,7 @@ export type GameEvent = {
   card?: Card;
   cards?: Card[];
   dealer?: Side;
+  by?: Side; // declare events (same as actor)
   reason?: string;
   points?: { you: number; ai: number };
   count?: number;

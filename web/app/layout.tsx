@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import MotionPrefs from "@/components/MotionPrefs";
 import Nav from "@/components/Nav";
 import "./globals.css";
 
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
       <body className="min-h-dvh flex flex-col">
         <Nav />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          <MotionPrefs>{children}</MotionPrefs>
+        </main>
         <footer className="border-t border-line text-muted text-xs px-4 py-4 text-center">
           QRummy · RL agent trained with RLCard DQN · Open source, $0 build
         </footer>
