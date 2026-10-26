@@ -35,3 +35,6 @@ training/*.log
 *.md
 !README.md
 !**/README.md
+
+# raw session exports (the rendered page lives in web/public/transcript/)
+qrummy-transcripts.txt
