@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>QRummy Interview Prep</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --panel2: #f0eee7; --ink: #1c1f24; --muted: #5d6470; --line: #dedbd2;
+  --accent: #8a5f00; --accent-soft: #fff4d6; --edge: #9aa0a8; --lane: #efede6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1218; --panel: #161b23; --panel2: #1c222c; --ink: #e8e6e1; --muted: #9aa3b0; --line: #2a313c;
+    --accent: #d9b54a; --accent-soft: #2a2414; --edge: #5f6875; --lane: #121720;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1218; --panel: #161b23; --panel2: #1c222c; --ink: #e8e6e1; --muted: #9aa3b0; --line: #2a313c;
+  --accent: #d9b54a; --accent-soft: #2a2414; --edge: #5f6875; --lane: #121720;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 32px 16px 96px; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.2; margin: 0 0 8px; }
+h2 { font-size: 1.45rem; margin: 4px 0 6px; }
+h3 { font-size: 1rem; margin: 18px 0 6px; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; font-size: .78rem; }
+p { margin: 0 0 10px; }
+a { color: var(--accent); }
+code { font: .88em ui-monospace, "Cascadia Code", Consolas, monospace; background: var(--panel2); padding: 1px 5px; border-radius: 5px; }
+.lede { color: var(--muted); max-width: 70ch; }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 8px; }
+.toc a, .chips a { text-decoration: none; font-size: .85rem; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--ink); }
+.toc a:hover, .chips a:hover { border-color: var(--accent); color: var(--accent); }
+.stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 0; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px; font-size: .85rem; color: var(--muted); }
+.stat b { display: block; font-size: 1.25rem; color: var(--ink); }
+.dwrap { margin: 26px 0 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 10px; overflow-x: auto; }
+.diagram { display: block; width: 100%; min-width: 760px; height: auto; }
+.lane { fill: var(--lane); stroke: var(--line); }
+.lanet { fill: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .03em; }
+.edge { fill: none; stroke: var(--edge); stroke-width: 1.6; }
+.elabel { fill: var(--muted); font-size: 11px; paint-order: stroke; stroke: var(--lane); stroke-width: 4px; }
+.node rect { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; transition: stroke .15s, fill .15s; }
+.node .nt { fill: var(--ink); font-size: 15px; font-weight: 700; }
+.node .ns { fill: var(--muted); font-size: 11.5px; }
+.node:hover rect, .node:focus rect { stroke: var(--accent); fill: var(--accent-soft); stroke-width: 2.2; }
+.node:focus { outline: none; }
+.node.ext rect { stroke-dasharray: 5 4; }
+.hint { color: var(--muted); font-size: .85rem; margin: 6px 2px 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+.comp, .block { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; margin: 22px 0; scroll-margin-top: 16px; }
+.comp:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.chead .tag { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.files { font-size: .8rem; }
+.why { margin: 0; padding-left: 20px; }
+.why li { margin: 4px 0; }
+.qhead { display: flex; justify-content: space-between; align-items: end; gap: 10px; flex-wrap: wrap; }
+.tools button { font: inherit; font-size: .8rem; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel2);
+  color: var(--ink); cursor: pointer; }
+.tools button:hover { border-color: var(--accent); }
+details.qa { border: 1px solid var(--line); border-radius: 12px; margin: 8px 0; background: var(--panel2); }
+details.qa summary { cursor: pointer; padding: 10px 14px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa summary::after { content: "▾"; margin-left: auto; color: var(--muted); transition: transform .15s; }
+details.qa[open] summary::after { transform: rotate(180deg); }
+details.qa summary:hover { color: var(--accent); }
+.qn { color: var(--accent); min-width: 2.2em; }
+.ans { padding: 0 16px 14px 16px; color: var(--ink); border-top: 1px dashed var(--line); padding-top: 10px; }
+.ans ul { margin: 6px 0; padding-left: 20px; }
+.back { margin: 14px 0 0; font-size: .85rem; }
+.tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 12px 0 6px; }
+.tcard { background: var(--panel2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.tcard h3 { margin: 0 0 6px; }
+.tcard p { margin: 0; font-size: .93rem; }
+footer { color: var(--muted); font-size: .8rem; margin-top: 30px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>QRummy: implementation walkthrough &amp; interview prep</h1>
+  <p class="lede">How the Indian Rummy RL agent, its coach and the website are built, component by component, with the reasoning
+  behind each choice and the questions an interviewer is likely to ask. Click any box in the diagram to jump to it; click a
+  question to reveal the answer.</p>
+  <nav class="toc" aria-label="Sections">
+    <a href="#diagram">Diagram</a><a href="#c-rules">Components</a><a href="#project">Project questions</a>
+    <a href="#theory">Theory primer</a><a href="#theory-qa">Theory questions</a>
+  </nav>
+  <div class="stats">
+    <div class="stat"><b>14</b>components</div>
+    <div class="stat"><b>165</b>questions with answers</div>
+    <div class="stat"><b>51 / 48 / 38%</b>heuristic / hybrid / DQN vs heuristic</div>
+    <div class="stat"><b>0.020</b>value-net ECE (held out)</div>
+  </div>
+
+  <section id="diagram" style="scroll-margin-top:16px">
+    <div class="dwrap"><svg viewBox="0 0 960 544" role="img" aria-labelledby="dgt" class="diagram">
+<title id="dgt">QRummy component diagram: click a component to jump to its section</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--edge)"/></marker></defs>
+<rect class="lane" x="18" y="18" width="294" height="516" rx="16"/>
+<text class="lanet" x="32" y="42">Engine · indian_rummy/</text>
+<rect class="lane" x="333" y="18" width="294" height="516" rx="16"/>
+<text class="lanet" x="347" y="42">Training · offline (PyTorch + RLCard)</text>
+<rect class="lane" x="648" y="18" width="294" height="516" rx="16"/>
+<text class="lanet" x="662" y="42">Serving · live, $0</text>
+<path class="edge" d="M165.0,126 L165.0,162" marker-end="url(#arr)"/>
+<path class="edge" d="M165.0,224 L165.0,260" marker-end="url(#arr)"/>
+<path class="edge" d="M300,291.0 L345,95.0" marker-end="url(#arr)"/>
+<text class="elabel" x="322.5" y="188.0" text-anchor="middle">obs</text>
+<path class="edge" d="M300,389.0 L345,193.0" marker-end="url(#arr)"/>
+<text class="elabel" x="322.5" y="286.0" text-anchor="middle">demos</text>
+<path class="edge" d="M480.0,126 L480.0,162" marker-end="url(#arr)"/>
+<path class="edge" d="M480.0,224 L480.0,260" marker-end="url(#arr)"/>
+<text class="elabel" x="480.0" y="237.0" text-anchor="middle">checkpoints</text>
+<path class="edge" d="M480.0,322 L480.0,358" marker-end="url(#arr)"/>
+<text class="elabel" x="480.0" y="335.0" text-anchor="middle">chosen</text>
+<path class="edge" d="M480.0,456 L480.0,420" marker-end="url(#arr)"/>
+<text class="elabel" x="480.0" y="433.0" text-anchor="middle">weights</text>
+<path class="edge" d="M345,193.0 C305,193.0 305,487.0 345,487.0" marker-end="url(#arr)"/>
+<text class="elabel" x="313.0" y="340.0" text-anchor="middle">logged states</text>
+<path class="edge" d="M615,389.0 L660,193.0" marker-end="url(#arr)"/>
+<text class="elabel" x="637.5" y="286.0" text-anchor="middle">.npz</text>
+<path class="edge" d="M300,389.0 L660,193.0" marker-end="url(#arr)"/>
+<text class="elabel" x="480.0" y="286.0" text-anchor="middle">Easy / Hard</text>
+<path class="edge" d="M300,487.0 L660,291.0" marker-end="url(#arr)"/>
+<text class="elabel" x="480.0" y="384.0" text-anchor="middle">top pick</text>
+<path class="edge" d="M795.0,126 L795.0,162" marker-end="url(#arr)"/>
+<text class="elabel" x="795.0" y="139.0" text-anchor="middle">JSON</text>
+<path class="edge" d="M795.0,224 L795.0,260" marker-end="url(#arr)"/>
+<path class="edge" d="M795.0,322 L795.0,358" marker-end="url(#arr)"/>
+<text class="elabel" x="795.0" y="335.0" text-anchor="middle">facts</text>
+<path class="edge" d="M930,487.0 C976,487.0 976,193.0 930,193.0" marker-end="url(#arr)"/>
+<a href="#c-rules" class="node"><rect x="30" y="64" width="270" height="62" rx="12"/><text class="nt" x="46" y="91">Rules engine</text><text class="ns" x="46" y="111">game.py · cards · melds · match</text></a>
+<a href="#c-solver" class="node"><rect x="30" y="162" width="270" height="62" rx="12"/><text class="nt" x="46" y="189">Arrangement solver</text><text class="ns" x="46" y="209">solver.py · patterns.py</text></a>
+<a href="#c-features" class="node"><rect x="30" y="260" width="270" height="62" rx="12"/><text class="nt" x="46" y="287">Observation encoder</text><text class="ns" x="46" y="307">features.py · 1,098 inputs</text></a>
+<a href="#c-heuristic" class="node"><rect x="30" y="358" width="270" height="62" rx="12"/><text class="nt" x="46" y="385">Heuristic agent</text><text class="ns" x="46" y="405">agents/heuristic.py</text></a>
+<a href="#c-hybrid" class="node"><rect x="30" y="456" width="270" height="62" rx="12"/><text class="nt" x="46" y="483">Hybrid policy</text><text class="ns" x="46" y="503">agents/hybrid.py</text></a>
+<a href="#c-env" class="node"><rect x="345" y="64" width="270" height="62" rx="12"/><text class="nt" x="361" y="91">RLCard environment</text><text class="ns" x="361" y="111">rlcard_env.py</text></a>
+<a href="#c-dqn" class="node"><rect x="345" y="162" width="270" height="62" rx="12"/><text class="nt" x="361" y="189">DQN training</text><text class="ns" x="361" y="209">train_dqn.py · DQfD · shaping · CQL</text></a>
+<a href="#c-value" class="node"><rect x="345" y="456" width="270" height="62" rx="12"/><text class="nt" x="361" y="483">Value network</text><text class="ns" x="361" y="503">train_value.py · calibration</text></a>
+<a href="#c-eval" class="node"><rect x="345" y="260" width="270" height="62" rx="12"/><text class="nt" x="361" y="287">Evaluation & selection</text><text class="ns" x="361" y="307">evaluate.py · model card</text></a>
+<a href="#c-export" class="node"><rect x="345" y="358" width="270" height="62" rx="12"/><text class="nt" x="361" y="385">NumPy export & inference</text><text class="ns" x="361" y="405">export_models.py · np_models.py</text></a>
+<a href="#c-web" class="node"><rect x="660" y="64" width="270" height="62" rx="12"/><text class="nt" x="676" y="91">Frontend</text><text class="ns" x="676" y="111">Next.js 16 static export · Motion</text></a>
+<a href="#c-api" class="node"><rect x="660" y="162" width="270" height="62" rx="12"/><text class="nt" x="676" y="189">Backend API</text><text class="ns" x="676" y="209">FastAPI · sessions · AI players</text></a>
+<a href="#c-coach" class="node"><rect x="660" y="260" width="270" height="62" rx="12"/><text class="nt" x="676" y="287">Coach & explanations</text><text class="ns" x="676" y="307">coach.py · llm.py (Gemini)</text></a>
+<a href="#c-deploy" class="node"><rect x="660" y="456" width="270" height="62" rx="12"/><text class="nt" x="676" y="483">Deployment & CI</text><text class="ns" x="676" y="503">Pages · Render · Docker · Actions</text></a>
+<a href="#c-coach" class="node ext"><rect x="660" y="358" width="270" height="62" rx="12"/><text class="nt" x="676" y="385">Gemini API</text><text class="ns" x="676" y="405">external · wording only</text></a>
+</svg></div>
+    <p class="hint">Arrows show data flow. On a narrow screen, scroll the diagram sideways or use the list below.</p>
+    <div class="chips"><a href="#c-rules">Rules engine</a><a href="#c-solver">Arrangement solver</a><a href="#c-features">Observation encoder</a><a href="#c-heuristic">Heuristic agent</a><a href="#c-hybrid">Hybrid policy</a><a href="#c-env">RLCard environment</a><a href="#c-dqn">DQN training</a><a href="#c-value">Value network</a><a href="#c-eval">Evaluation & selection</a><a href="#c-export">NumPy export & inference</a><a href="#c-web">Frontend</a><a href="#c-api">Backend API</a><a href="#c-coach">Coach & explanations</a><a href="#c-deploy">Deployment & CI</a></div>
+  </section>
+
+  
+<section class="comp" id="c-rules">
+  <div class="chead">
+    <span class="tag">01 · Engine</span>
+    <h2>Rules engine</h2>
+    <code class="files">game.py · cards · melds · match</code>
+  </div>
+  <h3>What it is</h3>
+  <p>A pure-Python state machine for one round (<code>RummyGame</code>) and a 7-round match wrapper (<code>match.py</code>).
+ It deals 162 physical cards (3 decks + 6 printed jokers), enforces every house rule (R1–R11), validates rummies,
+ handles reveal of the original, the closed joker (CJ) and wild rank, forfeits, reshuffles and scoring, and appends an
+ <b>event</b> for every transition so the UI can animate it.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Single source of truth for rules.</b> The RL environment, the server and the puzzle generator all call the same engine, so the AI can never train on rules the website doesn't enforce.</li><li><b>Two id spaces.</b> Physical card ids (0–161) for the UI and animation; card <i>types</i> (0–52) and count vectors for the solver and features, because three copies of 7♥ are interchangeable for strategy.</li><li><b>Reproducible.</b> A round is fully determined by <code>(seed, action list)</code>, which made bugs replayable and evaluations comparable.</li><li><b>Invariants asserted in tests:</b> 162 cards conserved across zones, 13 cards between turns, locked cards never leave the hand, the CJ is never in a zone.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-rules">Expand all</button>
+    <button type="button" data-close="c-rules">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why model the game as an explicit state machine?</summary><div class="ans">Each decision point (draw, discard/forfeit, reveal) is a state with its own legal actions. Making phases explicit means legality is a function of the state, the server can return 409 for out-of-phase requests, and the RL env only needs to ask “whose turn and what's legal”. Automatic transitions (win check, reshuffle, CJ flip) run in END_CHECKS without a player decision.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>Why separate physical card ids from card types?</summary><div class="ans">The UI must animate a specific card (which 7♥ moved), but strategy only depends on how many of each type you hold. Types give a 53-long count vector that is cheap to hash, memoise and encode as features; physical ids keep the animation honest.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How does the engine accept both RL actions and UI actions?</summary><div class="ans"><code>step()</code> takes RL integers (0 closed draw, 1 open draw, 2–54 discard by type, 55 forfeit) and UI tuples like <code>("discard", card_id)</code> or <code>("reveal", card_ids)</code>. Reveals are resolved by a per-player reveal policy (automatic for the AI and RL), or wait for an explicit UI action for the human (D-055).</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>How is hidden information protected at the engine level?</summary><div class="ans"><code>get_state(pid)</code> builds the acting player's information set only: own hand, revealed originals, discard history, cards the opponent picked from the open pile, and the CJ only after your own reveal. The draw-pile order and the opponent's closed cards never enter it, so features built from it cannot leak.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>What does the event log give you?</summary><div class="ans">Every transition (deal, draw, discard, reveal, cj_flip, declare, reshuffle, round_end) is appended with a sequence number. The server streams the new events to the browser, which replays them as animations in order, then applies the final view, so the animation can never disagree with the state.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>How do you know the engine is correct?</summary><div class="ans">~280 pytest tests: hand-made rule cases per rule id (R1–R11), seeded random-play invariant loops (thousands of rounds), and property tests that compare the fast solver against an exhaustive oracle built on the slow validators in <code>melds.py</code>.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>What edge cases were tricky?</summary><div class="ans">A pre-original player taking the open card must reveal an original containing it that same turn, so some discards become illegal; the first-turn forfeit after a closed draw means discarding exactly the drawn card; a same-turn win before seeing the CJ only treats printed jokers as wild; and the 3/3/3/3 + 1 scoring rule for a loser added after user review.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>How is the reveal made unskippable?</summary><div class="ans">A pending reveal at the end of a turn blocks every other action in the engine (D-056), not just in the UI. The front end shows a modal, but even a hand-crafted API call cannot skip it.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How do variants (10-card, 7-card) fit in?</summary><div class="ans">A <code>Variant</code> dataclass holds decks, jokers, hand size, win template, turn cap and penalty values. Everything else (solver slots, scoring, features) reads the template from it, so variants are configuration, not code branches.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>Why no torch in the engine package?</summary><div class="ans">The engine is imported by the production server, which runs on 512 MB RAM. Keeping it NumPy-only made the deployed image small and let inference run without PyTorch at all.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-solver">
+  <div class="chead">
+    <span class="tag">02 · Engine</span>
+    <h2>Arrangement solver</h2>
+    <code class="files">solver.py · patterns.py</code>
+  </div>
+  <h3>What it is</h3>
+  <p>Given a hand (count vector) and a context (locked original, wild rank, pre/post-original), finds the
+ <b>lowest-points arrangement</b> into rummies that fits the 3/3/3/4 template, checks an <b>exact-cover win</b>, enumerates
+ valid originals and evaluates every discard. It powers scoring, legality, the heuristic, the features and the coach.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Performance-critical:</b> features need <code>solve(hand − t)</code> for every discard of every decision, so it must be ~milliseconds.</li><li><b>Pattern table:</b> every valid rummy shape (natural-card multiset, wilds needed, size, kind) is precomputed once at import.</li><li><b>Memoised DFS:</b> state = (remaining natural counts as bytes, wilds left, open slots). Branch on the first remaining card: leave it loose (pay its points) or put it in one of the patterns that contain it.</li><li><b>Template slots</b> model “at most one 4-card rummy”; for scoring a 3-card rummy may fill the 4-slot (3/3/3/3 + 1), while a win still needs exact sizes.</li><li><b>Oracle-tested</b> against a brute-force search over all groupings.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-solver">Expand all</button>
+    <button type="button" data-close="c-solver">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why not brute-force every partition of 14 cards?</summary><div class="ans">The number of set partitions explodes and most aren't rummies. Branching only on the first remaining card, over precomputed patterns that contain it, plus memoising on the residual count vector, collapses identical sub-problems (three copies of a card are interchangeable).</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>What is memoised and why bytes?</summary><div class="ans">The key is (natural counts, wilds left, remaining slots). The counts are a 52-long small-int vector; converting to <code>bytes</code> makes it hashable and cheap to compare, so <code>dict</code> lookups dominate rather than recursion.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How are wild cards handled?</summary><div class="ans">Printed jokers and (post-original) wild-rank cards are pulled into a wild pool. Patterns declare how many wilds they need, and leftover wilds score 0. Wild-rank cards can also act as their natural selves, and a meld made only of pool cards is valid only if it contains a wild-rank card (≥1 natural rule, D-052).</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>Why do jokers get used before wild-rank cards in the win search?</summary><div class="ans">A pool-only rummy needs a wild-rank card to count as its natural card. Spending printed jokers first keeps wild-rank cards available for that case; an exchange argument shows this never loses a win, and the oracle tests confirm it (D-053).</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>How does the template constraint work?</summary><div class="ans">Remaining slot sizes (e.g. 3,3,4 after a 3-card original) travel through the recursion. Scoring takes the smallest slot at least the rummy's size, so a 3-card rummy may use the 4-slot; taking the exact size first is never worse because a bigger slot can hold anything a smaller one can.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>Why is winning a separate exact-cover search?</summary><div class="ans">Scoring minimises points and may leave cards loose; a win needs every one of the 13 cards covered by exactly 3/3/3/4. A 0-point wild left out of rummies would make the scorer report 0 points without a win, so the two must be different searches (D-060b).</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How do you test a solver like this?</summary><div class="ans">Random dense hands (few suits, few ranks, jokers) so rummies are common, then compare points and win/no-win against an exhaustive oracle that tries every group and every slot. Over a thousand random cases plus hand-made rule cases run in CI.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>What is discard_eval used for?</summary><div class="ans">It returns the arrangement after removing each candidate discard: points left, loose-card count, whether it wins, whether an original survives. Those become feature block I, the heuristic's ranking, and the coach's reason tags.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How do pre-original hands get scored for features?</summary><div class="ans">They are solved “as if” the best available original were declared, plus <code>original_outs</code>, the number of unseen cards that would complete one. Without an original it returns an optimistic lower bound, which is fine for features but never used for real scoring (a pre-original loser always scores 80).</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>What would you optimise next?</summary><div class="ans">A lower-bound prune (remaining points minus coverable points), sharing the cache across the 14 discard evaluations of one decision, or numba on the inner loop. It was fast enough in practice (a full hint, including every discard evaluation and the value net, has a ~65 ms local median), so this wasn't needed.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-features">
+  <div class="chead">
+    <span class="tag">03 · Engine</span>
+    <h2>Observation encoder</h2>
+    <code class="files">features.py · 1,098 inputs</code>
+  </div>
+  <h3>What it is</h3>
+  <p>Turns a player's information set into a fixed 1,098-number vector for the networks, plus an <code>Analysis</code>
+ object (solver facts, legal actions, outs) shared by the heuristic, the coach and the reward shaping.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Threshold encoding</b> of counts (bits ≥1, ≥2, ≥3; jokers up to ≥6): 162 bits per card block, monotone and easy for an MLP.</li><li><b>Blocks:</b> own hand, locked original, discard top, wild rank, dead cards, opponent's known cards, phase flags, drawn card, pile sizes.</li><li><b>Engineered solver features</b> (block I, 6 rows × 53 types): points after each discard, in-best-arrangement, outs, discard-wins, loose cards after, original-remains. These give the network the combinatorics it can't learn cheaply.</li><li><b>FEATURE_VERSION</b> is stored in every checkpoint and checked at load, so a model can never silently run on a changed encoding.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-features">Expand all</button>
+    <button type="button" data-close="c-features">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why engineer solver features instead of letting the network learn?</summary><div class="ans">Whether a discard keeps a 3/3/3/4 cover is a hard combinatorial function of 14 cards. An imitation probe showed a raw-ish encoding agreed with the heuristic on only ~42% of discards; adding per-discard solver rows (points after, loose cards after, original remains) is what made imitation work (D-061, D-066).</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>Why threshold rather than one-hot or raw counts?</summary><div class="ans">With three copies per card, ‘≥1, ≥2, ≥3’ bits are monotone: holding two 7♥ turns on the first two bits. That shares statistical strength between counts and avoids a network having to learn that 3 > 2 from a scalar.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How do you guarantee no hidden information leaks into the observation?</summary><div class="ans">The encoder only reads the per-player state from <code>get_state(pid)</code>, which is built from the information set (R11). API tests also assert the server never sends the AI's hand, the draw pile or the CJ early, and outs are computed from <i>unseen</i> copies (162 − own − dead − opponent-known), not from the real deck.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>What are ‘outs’ and how are they approximated?</summary><div class="ans">Unseen copies of card types that would improve the hand: those that complete a rummy from two uncovered cards, plus unseen wilds when at least two natural cards are uncovered. Pre-original ‘original outs’ are exact: unseen cards that complete a natural original (D-058).</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>Why version the features?</summary><div class="ans">Any change to the encoding changes the meaning of every input weight. The version is saved with checkpoints and exported <code>.npz</code> files and asserted at load, so a mismatch fails loudly instead of producing a plausible but wrong policy.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>Why is the Analysis object shared?</summary><div class="ans">The heuristic, reward shaping (Φ uses min points / original outs), the coach's tags and the features all need the same solver facts. Computing them once per decision keeps them consistent and avoids paying for the solver several times.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How large is the vector and why does size matter?</summary><div class="ans">1,098 floats. It sets the first-layer width (1,098 × 512 weights) and the replay buffer memory: 300k transitions store two observations each, which is why the buffer keeps them as float16 (halving RAM).</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>How did the 3/3/3/3 rule change affect the encoder?</summary><div class="ans">Block I values (points after a discard) changed for near-win hands. Rather than assume, the shipped DQN and value net were re-evaluated under the new rule: DQN 38.3% vs heuristic (up from 35.0%) and value ECE 0.021, so no retraining was needed.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>What features would you add next?</summary><div class="ans">Opponent modelling (what suits/ranks they've picked or avoided over time), a discard-history recency window, and a ‘danger’ score for feeding the opponent, which the coach currently only approximates with an ‘AI may want it’ tag.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>Normalisation?</summary><div class="ans">Scalars are scaled into [0,1] (points/80, outs/20, pile sizes/134, turn/100). RLCard's estimator also starts with a BatchNorm layer, which the NumPy export reproduces as an affine transform.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-heuristic">
+  <div class="chead">
+    <span class="tag">04 · Engine</span>
+    <h2>Heuristic agent</h2>
+    <code class="files">agents/heuristic.py</code>
+  </div>
+  <h3>What it is</h3>
+  <p>A hand-written expert: draws the open card only when it completes an original, a win, or saves ≥ 3 points;
+ discards by minimising a score (points after + 1.5·loose cards − 0.8·outs + small tie-breaks, never a wild);
+ forfeits only with no original, ≤ 2 original outs and no joker. It is the curriculum opponent, the demonstrator for
+ imitation learning, the Easy base (with ε-random moves) and, in the end, the <b>Hard</b> AI.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Strong baseline first.</b> In a 3-day sprint a solver-backed heuristic gives a guaranteed competent opponent, and an RL agent needs something to beat.</li><li><b>Demonstrator:</b> 60k heuristic transitions warm-start the replay buffer and drive DQfD pretraining.</li><li><b>Fixes found by self-play stats:</b> never take back a card you discarded (breaks pick-up/throw-back loops), always play a winning discard, penalise loose cards because a win needs an exact cover (D-060).</li><li><b>Hard = heuristic</b> because it was measurably the strongest player (D-034, D-096).</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-heuristic">Expand all</button>
+    <button type="button" data-close="c-heuristic">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why does the heuristic penalise loose cards, not just points?</summary><div class="ans">Wild cards score 0, so a hand can show 0 points while still having loose cards and not being a win. Since a win requires every card in a rummy, the count of loose cards is a better ‘distance to win’ than points alone.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>What is the discard score exactly?</summary><div class="ans">Post-original: <code>points_after + 1.5·loose_after − 0.8·outs_after + 0.05·card_points (+100 if wild)</code>; a winning discard is always chosen first. Pre-original it adds a penalty of 15 if no original remains after the discard and weights points less (0.3×).</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>Why never take back your own discard?</summary><div class="ans">Two heuristics can loop forever: one throws X, the other takes it, throws it back. The rule removes the cycle and slightly improves strength; it was found by looking at long self-play rounds.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>How does the reveal choice work?</summary><div class="ans">Among valid originals, pick the one that maximises expected −min_points over the possible wild ranks weighted by unseen counts; ties keep cards that belong to more candidate rummies. A 3-card reveal is weakly dominant because it can be extended later.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>How is Easy built from it?</summary><div class="ans">Easy = heuristic with ε = 0.35: 35% of the time a uniformly random legal move (never forfeiting). Over 4,000 rounds a 30% version wins ~30% against the full heuristic, giving a clear, calibrated step down.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>Why didn't the DQN beat it?</summary><div class="ans">The heuristic sits on top of an exact solver, so its discards already exploit the hard combinatorics. The remaining edge (opponent reading, timing) needs long-horizon credit assignment under hidden information, which DQN with ~100k rounds of self-play didn't find; RL fine-tuning drifted instead (see DQN).</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>Is it fair to call the product an RL project if Hard is a heuristic?</summary><div class="ans">Yes, if you're honest about it: the RL pipeline produced the Medium opponent, the coach's Q-value rankings and the value network, and the evaluation decided objectively that the heuristic is stronger. Shipping the weaker model as ‘Hard’ would have been misleading.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>How does the forfeit rule compare to an expected-value rule?</summary><div class="ans">Forfeit costs 40; losing without an original costs 80. The heuristic approximates ‘P(no original by round end) is high’ with no original, ≤ 2 original outs and no joker. A value-net-based rule (forfeit if predicted score difference < −0.5) was specified but the simple rule was kept.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How fast is it?</summary><div class="ans">One solver call per candidate discard (≤ 14) per decision, memoised; in practice milliseconds per move locally, so it was also cheap enough to generate 60k demonstrations and 3,000-round statistics.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>How did it help generate the Learn content?</summary><div class="ans">‘Best discard’ puzzles come from heuristic self-play positions where the best discard beats the runner-up by ≥ 2 score points (one clear answer); strategy-note numbers come from 3,000 heuristic self-play rounds.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-hybrid">
+  <div class="chead">
+    <span class="tag">05 · Engine</span>
+    <h2>Hybrid policy</h2>
+    <code class="files">agents/hybrid.py</code>
+  </div>
+  <h3>What it is</h3>
+  <p>The DQN chooses among the heuristic's <b>top-3 discards</b> (and forfeit when legal); a winning discard is
+ always taken; draw decisions come from the DQN. It scored 48.2% against the heuristic, versus 38.3% for the DQN alone.
+ It powers the coach's top suggestion.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Constrained action space:</b> the heuristic prunes obviously bad discards, the network breaks ties among plausible ones.</li><li><b>Torch-free:</b> works with both the PyTorch policy and the NumPy one, so the server uses it without torch.</li><li><b>Used by the coach,</b> because suggesting the raw DQN argmax would sometimes advise clearly worse discards than the Hard AI plays.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-hybrid">Expand all</button>
+    <button type="button" data-close="c-hybrid">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why combine a learned policy with a heuristic?</summary><div class="ans">The DQN's Q-values are noisy outside the states it saw often (extrapolation error). Restricting it to the heuristic's top-k makes catastrophic picks impossible while still letting learned preferences reorder good options. It's a form of action-space shaping / safe policy improvement.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>Why k = 3?</summary><div class="ans">Large enough that the DQN can disagree meaningfully, small enough that every candidate is reasonable. It was the setting tracked during training evaluations; tuning k was not worth the remaining time.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>Why is the hybrid not Hard if it's the RL agent's best form?</summary><div class="ans">Over 4,000 rounds it won 48.2% vs the heuristic's 51.0% self-play baseline: about 3–4 standard errors weaker. Hard is defined as the strongest player.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>Why not Medium?</summary><div class="ans">At 48% it's almost as strong as Hard, so the difficulty ladder would have a near-duplicate step. The pure DQN (38%) sits cleanly between Easy (~30%) and Hard.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>How does the coach use it?</summary><div class="ans">The coach ranks all legal moves by DQN Q-values (for the preference bars), then bumps the hybrid's choice to first place. The suggestion is therefore near-heuristic strength while the bars still show the network's view.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>Is there a risk the hybrid disagrees with the Q-value ranking shown?</summary><div class="ans">Yes; that's why its pick is lifted to the top explicitly instead of trusting argmax Q. The UI shows a preference percentage per move, so a user can see the network's alternatives.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How would you make the hybrid stronger?</summary><div class="ans">Learn k or a confidence threshold (fall back to the heuristic when Q-values are close), or train the DQN only on the heuristic's top-k actions so its Q-estimates are calibrated where it's actually used.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>What happens on draws?</summary><div class="ans">Draw and forfeit decisions come from the DQN's masked Q-values over legal actions; draws are a 2–3-way choice, where the DQN's learned behaviour was reasonable.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>Does the hybrid ever play an illegal move?</summary><div class="ans">No: candidates come from legal discards and Q-values are masked to legal actions. The server also re-checks every AI move and would fall back to the heuristic, and 50 automated matches recorded zero fallbacks.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>How is it tested?</summary><div class="ans">Its win rate is measured in every training evaluation (‘hybrid_vs_heuristic’), in the 20-checkpoint screen and the 4,000-round confirmation; API tests exercise it through the coach.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-env">
+  <div class="chead">
+    <span class="tag">06 · Training</span>
+    <h2>RLCard environment</h2>
+    <code class="files">rlcard_env.py</code>
+  </div>
+  <h3>What it is</h3>
+  <p><code>IndianRummyEnv</code> subclasses <code>rlcard.envs.Env</code> and is registered as <code>"indian-rummy"</code>.
+ It exposes 56 discrete actions with a legal-action mask, the 1,098-dim observation, raw state for agents that need it,
+ and zero-sum terminal payoffs <code>(opp_points − my_points)/80</code> clipped to [−1, 1].</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Reuse a maintained toolkit</b> (RLCard, Zha et al., IJCAI 2020) for agents, training loops and conventions instead of writing DQN from scratch.</li><li><b>Reveal decisions are auto-resolved</b> by the heuristic reveal policy inside the env, so the RL agent only learns draw / discard / forfeit.</li><li><b>Discard by card type</b> (53 ids), not position: the action space is small and permutation-invariant.</li><li><b>Training round cap</b> of 120 turns keeps throughput high (real games cap at 300).</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-env">Expand all</button>
+    <button type="button" data-close="c-env">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why RLCard rather than Gym/PettingZoo or a custom loop?</summary><div class="ans">RLCard is built for multi-player card games: it handles turn order, per-player states, legal-action masks and payoffs, and ships DQN/NFSP/DMC agents. Registering a custom env was a small subclass and kept the training code conventional.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>How is the action space designed?</summary><div class="ans">0 = closed draw, 1 = open draw, 2–54 = discard a card <i>type</i>, 55 = forfeit. Discarding by type rather than hand position makes the action meaning independent of sorting and keeps the output layer at 56.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How do legal-action masks work with DQN?</summary><div class="ans">The env returns legal actions per state; the agent takes argmax only over legal ones (masking others to −∞), and the TD target maxes over the next state's legal actions. The server re-validates every action anyway.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>Why are reveals not RL actions?</summary><div class="ans">Revealing is forced (you must reveal when you have an original) and the only choice is which cards; a solver-based policy handles it well. Removing it shrinks the action space and the credit-assignment problem.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>What's the reward?</summary><div class="ans">Sparse terminal payoff scaled to [−1,1]: the point difference / 80, zero-sum, no match multipliers. A forfeit gives exactly −0.5 to the forfeiter, so the agent learns the forfeit trade-off from the reward directly.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>How is reward shaping added?</summary><div class="ans">A custom <code>reorganize</code> adds F = γΦ(s′) − Φ(s) to each transition, with Φ = −min_points/80 post-original or a pre-original term based on original outs. Potential-based shaping provably doesn't change the optimal policy (Ng et al., 1999).</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>Why cap training rounds at 120 turns?</summary><div class="ans">Rare non-terminating rounds (both players stuck) waste simulation time and produce long, low-signal trajectories. The cap is training-only; exhausted rounds are scored normally.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>How fast is the environment?</summary><div class="ans">About 2–3 rounds per second in single-process training with the solver in the loop (run C did ~101,600 rounds in 9 h). The solver, not the GPU, was the bottleneck.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How are both seats trained?</summary><div class="ans">In self-play stage B the opponent pool is 50% the current DQN (both seats feed transitions), 30% heuristic, 20% frozen snapshots taken hourly, which reduces non-stationarity and forgetting.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>What does raw_obs carry?</summary><div class="ans">The <code>Analysis</code> (solver facts) and legal actions, so the heuristic and hybrid agents can act from the same state RLCard passes, without recomputing the solver.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-dqn">
+  <div class="chead">
+    <span class="tag">07 · Training</span>
+    <h2>DQN training</h2>
+    <code class="files">train_dqn.py · DQfD · shaping · CQL</code>
+  </div>
+  <h3>What it is</h3>
+  <p>RLCard's Double-DQN agent (MLP 512-512-256) extended with an O(1) float16 ring buffer, a <b>DQfD</b> large-margin
+ imitation loss on 60k heuristic transitions (6k pretraining steps, then kept during RL with λ decaying 1 → 0.5),
+ potential-based shaping, clipped TD targets, Huber loss and, in the final run, a <b>CQL</b> penalty.
+ Three overnight runs (A, B, C) were evaluated every 5k rounds.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Pretraining from demonstrations</b> because an untrained DQN plays near-randomly and almost never sees a win in a long sparse-reward round.</li><li><b>Run A diverged:</b> mean best-legal Q rose from 0.37 to 4.84 (max 12.4) although true returns are bounded near ±1.5; win rate fell from 37.5% to 14.5%. Diagnosis: overestimation from extrapolation error.</li><li><b>Run B</b> (clip targets to ±1.5, Huber, lr 5e-5) slowed the drift; <b>run C</b> added CQL(H) α = 0.5 and was the most stable, but the pure DQN still slid from ~35% to ~25% vs the heuristic.</li><li><b>Outcome:</b> the DQfD-pretrained network was the strongest checkpoint of all 20 screened; it ships as Medium (38.3% vs heuristic, 95.8% vs random).</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-dqn">Expand all</button>
+    <button type="button" data-close="c-dqn">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why DQN for this problem?</summary><div class="ans">Discrete, small action space (56) with legal masks, an off-policy method that can reuse demonstrations and a replay buffer, and a stable RLCard implementation. Policy-gradient methods (PPO) would need much more on-policy simulation, which the solver-bound env couldn't afford.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>What is DQfD and why use it?</summary><div class="ans">Deep Q-learning from Demonstrations (Hester et al., 2018): add a supervised large-margin loss <code>max_a[Q(s,a) + l(a_E,a)] − Q(s,a_E)</code> so the demonstrator's action is at least a margin above others, alongside the TD loss. It gives a competent policy before RL and keeps Q-values grounded.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>What went wrong in run A?</summary><div class="ans">Q-values grew far beyond the bounded true return: classic overestimation, amplified because the max in the TD target picks actions the data rarely covers (extrapolation error). The policy chased inflated values and got worse each evaluation; it was stopped at 17.5k rounds.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>Why clip TD targets and use Huber loss?</summary><div class="ans">The true return is bounded by the clipped payoff plus shaping (±1.5), so clipping targets removes impossible values; Huber (smooth-L1) limits gradient size from large TD errors. Both are standard stabilisers; they slowed but didn't stop drift.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>What is the CQL penalty you added?</summary><div class="ans">Conservative Q-learning (Kumar et al., 2020), CQL(H): add α·(logsumexp_a Q(s,a) − Q(s,a_data)) over the state's legal actions. It pushes down Q on actions not in the data and up on taken actions, directly countering overestimation. The buffer had to store each state's own legal actions for it (RLCard only stores the next state's).</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>Why did RL fine-tuning still make the policy weaker?</summary><div class="ans">Likely a mix of: the heuristic opponent is near-optimal for its own play style so improvements are subtle; partial observability makes Q(s,a) high-variance; 100k rounds is little for long sparse rounds; self-play non-stationarity; and imitation λ decaying lets TD noise erode the demonstrated behaviour. The honest conclusion was to ship the pretrained network.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How did you decide which checkpoint to ship?</summary><div class="ans">Screen all 20 checkpoints (pure and hybrid) on a fresh seed at 1,000 rounds, then re-test the top candidates at 4,000 rounds on another fresh seed to avoid the winner's curse. The pretrained net won in both.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>Why a ring buffer with float16?</summary><div class="ans">RLCard's list buffer pops from the front (O(n)) and stores float64; with 300k transitions × 2 × 1,098 inputs that is ~5 GB. An O(1) ring buffer with float16 halves memory and removes the per-step cost (D-063).</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How was exploration handled?</summary><div class="ans">ε-greedy from 0.15 down to 0.03 (low because pretraining already gives a sensible policy), plus opponent diversity from the pool (heuristic, frozen snapshots, self).</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>What would you try with more time?</summary><div class="ans">Longer DQfD with more demonstrations and a stronger demonstrator, keeping λ high; NFSP or DMC (Deep Monte Carlo, used by DouZero) which suit imperfect-information card games; Monte-Carlo returns instead of bootstrapping; and parallel actors to get 10–100× more rounds.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-value">
+  <div class="chead">
+    <span class="tag">08 · Training</span>
+    <h2>Value network</h2>
+    <code class="files">train_value.py · calibration</code>
+  </div>
+  <h3>What it is</h3>
+  <p>An MLP (1,098 → 512 → 256 → two heads) predicting <b>P(win this round)</b> (sigmoid, BCE) and the score
+ difference (tanh, MSE) from a player's observation. Trained on 446k states logged during run C, validated on the last
+ 10% in play order, best epoch kept, then temperature-scaled. Held-out ECE 0.020, accuracy 64.4%.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Separate from the DQN</b> because Q-values mix policy and value and weren't trustworthy as probabilities; the coach needs a calibrated ‘chance to win’.</li><li><b>Honest validation split:</b> a random per-state split leaked near-duplicate states from the same round and flattered the metrics; holding out the tail of play order exposed fast overfitting (accuracy 64.4% → 61.4% over 6 epochs).</li><li><b>Early stopping on validation BCE</b> kept epoch 0; temperature ended at 1.05 (almost no correction needed).</li><li><b>Re-checked under the rule change</b> on 19,000 fresh positions: ECE 0.021, accuracy 65.7%.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-value">Expand all</button>
+    <button type="button" data-close="c-value">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>What does calibration mean and why does it matter here?</summary><div class="ans">A model is calibrated if, among positions where it says 70%, the player actually wins about 70%. The coach shows the number to humans; an over-confident model would mislead them even with good accuracy.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>How is ECE computed?</summary><div class="ans">Bin predictions into 15 equal-width bins; ECE = Σ_bins (fraction of samples in bin) × |mean predicted − observed win rate|. 0.02 means predictions are off by about 2 percentage points on average.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>What is temperature scaling?</summary><div class="ans">Divide the logit by a scalar T fitted on validation data to minimise NLL (Guo et al., 2017). It changes confidence without changing ranking. Here T = 1.05, so the model was already nearly calibrated.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>Why was the first version misleading?</summary><div class="ans">With a random split, states from the same round sat in both train and validation, so validation looked fine while the model memorised. With an in-order split it was clear the net overfit after one epoch; the first model only passed the calibration gate because temperature hit the 3.0 grid edge.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>Is 64% accuracy good?</summary><div class="ans">For predicting the winner of a card game from a mid-round position with hidden cards and luck, yes; early-round positions are close to coin flips. Calibration matters more than accuracy for a probability display.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>How is ‘win chance after a move’ computed?</summary><div class="ans">For discards: the value of the after-state. For the closed draw: average over 16 samples of the hidden cards (the AI's unseen hand and the draw pile are reshuffled consistently with what the human knows). Forfeit is fixed at 40 points.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>What data was it trained on, and is there a distribution shift?</summary><div class="ans">States logged from run C's training games (the DQN against its opponent pool: itself, frozen snapshots and the heuristic) after the first 30% of the run. Live games are human vs heuristic/DQN, so there is some shift; the fresh-game check (DQN vs heuristic) and the low ECE suggest it's modest.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>Why two heads?</summary><div class="ans">Win probability for the UI; expected score difference was intended for a value-based forfeit rule and as an auxiliary target that regularises the shared trunk.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How would you improve it?</summary><div class="ans">Train on more diverse play (human games, Easy/Hard opponents), add uncertainty (ensembles), condition on the opponent type, and evaluate calibration per game phase (early vs late).</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>How is it served?</summary><div class="ans">Exported to <code>value_model.npz</code> (weights + temperature), run with NumPy: one batched matrix multiply chain per hint. Verified to match torch to ~1e-7.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-eval">
+  <div class="chead">
+    <span class="tag">09 · Training</span>
+    <h2>Evaluation & selection</h2>
+    <code class="files">evaluate.py · model card</code>
+  </div>
+  <h3>What it is</h3>
+  <p>Fixed-seed head-to-head evaluation with alternating seats and an illegal-move guard; a two-stage checkpoint
+ screen; and the difficulty mapping recorded in <code>models/model_card.json</code>.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Seats alternate</b> every round because the first player wins ~53% of heuristic self-play rounds.</li><li><b>Two-stage screen on fresh seeds:</b> 20 checkpoints × (pure, hybrid) at 1,000 rounds (seed 777), then the leaders at 4,000 rounds (seed 4242), so the final number isn't biased by picking the luckiest run.</li><li><b>Standard error</b> at 4,000 rounds is ≈ 0.8 percentage points, so 51.0% vs 48.2% vs 38.3% are clearly separated.</li><li><b>Difficulty ladder:</b> Easy ≈ 30%, Medium 38%, Hard 51% (win rate vs the heuristic).</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-eval">Expand all</button>
+    <button type="button" data-close="c-eval">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why alternate seats?</summary><div class="ans">There's a first-mover advantage (~53% in self-play). Alternating cancels it so a win rate reflects strength, not seat assignment.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>What's the standard error of a 4,000-round win rate?</summary><div class="ans">√(p(1−p)/n) ≈ √(0.25/4000) ≈ 0.0079, about 0.8 percentage points. A 3–4 point gap is several SEs; a 1-point gap is within noise.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>Why re-test on a new seed?</summary><div class="ans">Selecting the best of many noisy measurements inflates the winner's score (winner's curse / selection bias). Confirming on an independent seed gives an unbiased estimate.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>Why is the heuristic's self-play baseline 51% and not 50%?</summary><div class="ans">Finite-sample noise (±0.8) and a shared seed set; it's within about 1.3 SE of 50%. It's the reference point the others are compared against.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>Which metrics besides win rate?</summary><div class="ans">Mean score difference per round (captures how badly you lose), forfeit rate, mean turns and an illegal-action count that must be zero.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>How was ‘no illegal AI moves’ verified?</summary><div class="ans">Every evaluation wraps agents in an illegal-move guard, and a slow test plays 50 full 7-round matches through the API with a random human; the AI's fallback counter stayed at 0.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>Why is Medium the pure DQN rather than the ‘closest to 50%’ rule in the spec?</summary><div class="ans">That rule assumed Hard would be a DQN. With Hard = heuristic it would pick Hard itself or the near-equal hybrid. The pure DQN gives a distinct middle step.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>How do you know your model is learning at all?</summary><div class="ans">Gate: DQN beats a random player ≥ 95% of rounds; the shipped net scores 95.8% over 2,000 rounds, and the run logs showed win rate vs random at 85–94% throughout.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>What's in the model card?</summary><div class="ans">The level → policy mapping, file paths, provenance (checkpoint, data, calibration numbers) and the evaluation table, so the deployed behaviour is traceable to experiments.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>What would a stronger evaluation look like?</summary><div class="ans">Full 7-round matches (variance from ×2 rounds), human play-testing data, Elo across many agents, and confidence intervals reported on the site.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-export">
+  <div class="chead">
+    <span class="tag">10 · Training</span>
+    <h2>NumPy export & inference</h2>
+    <code class="files">export_models.py · np_models.py</code>
+  </div>
+  <h3>What it is</h3>
+  <p>Converts PyTorch checkpoints into <code>.npz</code> files (weights + a JSON op list: batch-norm, linear, tanh,
+ relu) and runs them with NumPy only. Verified against torch to &lt; 1e-4 (actual 4.5e-6 for the DQN, 1.2e-7 for the
+ value net).</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Torch is ~1 GB</b>; Render's free tier has 512 MB RAM. The NumPy server peaks around 74 MB with 8 games.</li><li><b>Tiny models</b> (MLPs) don't need a framework at inference: a few matrix multiplies.</li><li><b>Equivalence tested</b> on probe inputs at export time and in <code>tests/test_np_models.py</code>; a feature-version guard rejects stale models.</li><li><b>BLAS pinned to one thread</b> in production: with real models, OpenBLAS starting a thread per host core on a 0.1-CPU container made hints take 3.9 s; pinned, ~0.4 s.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-export">Expand all</button>
+    <button type="button" data-close="c-export">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why not ONNX Runtime or TorchScript?</summary><div class="ans">Both add a runtime dependency and memory; for three dense layers NumPy is enough, easier to audit, and starts instantly. ONNX would be the choice for larger or convolutional models.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>How do you reproduce BatchNorm in NumPy?</summary><div class="ans">At inference BatchNorm is an affine transform: (x − running_mean)/√(running_var + eps) · γ + β. The exporter stores those arrays and the op order.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How do you verify the export?</summary><div class="ans">Run both implementations on probe inputs (random and real observations) and assert max |difference| below 1e-4; tests repeat this and check the feature-version guard.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>What was the BLAS problem?</summary><div class="ans">NumPy's OpenBLAS starts one worker per visible core. On Render the container sees many host cores but is CPU-quota-limited to 0.1, so threads fought over the quota. Setting <code>OPENBLAS_NUM_THREADS=1</code> cut hint latency ~10×; locally single-threaded was just as fast.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>What is stored in the npz?</summary><div class="ans">Named weight arrays plus a JSON ‘spec’ with the op sequence, feature version, and for the value net the temperature and head shapes.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>How is a forward pass done?</summary><div class="ans">Loop over ops: matmul + bias, tanh/relu, BN affine. Batched inputs (2-D) are supported, so the coach evaluates many after-states in one call.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How do you avoid training/serving skew?</summary><div class="ans">Same feature encoder package in both, versioned features, numerical equivalence tests, and the server falls back to the heuristic (logged) if a model fails to load.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>How big are the models?</summary><div class="ans">~3.6 MB (DQN) and ~2.6 MB (value) as npz, so they live in the git repo without LFS.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>Could the server still use torch locally?</summary><div class="ans">Yes: <code>ai.py</code> loads <code>.pt/.pth</code> with torch if given those paths, which is handy in development; production uses <code>.npz</code>.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>What's the latency budget now?</summary><div class="ans">Live on Render: hints ~0.3–0.6 s median, AI moves ~0.2 s; locally hints ~65 ms and actions ~14 ms.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-web">
+  <div class="chead">
+    <span class="tag">11 · Serving</span>
+    <h2>Frontend</h2>
+    <code class="files">Next.js 16 static export · Motion</code>
+  </div>
+  <h3>What it is</h3>
+  <p>A Next.js (App Router, TypeScript, Tailwind 4, Motion) site exported as static files to GitHub Pages: Home,
+ Rules (with card examples), Play (lobby → table → summaries), Learn (guided round, 60 puzzles, strategy notes). Cards
+ are custom SVG components; the table animates server events in order.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Static export</b> because GitHub Pages was a requirement and costs $0; all game logic stays on the server.</li><li><b>Event queue:</b> responses carry events; the UI animates them one at a time, then applies the final view, so animation and state never disagree.</li><li><b>Contract types</b> (<code>lib/types.ts</code>) mirror the server's views; a field-by-field sweep against real responses found one gap, now fixed.</li><li><b>Wake-up overlay</b> handles the free backend's cold start; layouts tested at 390 px portrait and 844 px landscape; honours reduced motion.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-web">Expand all</button>
+    <button type="button" data-close="c-web">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why Next.js if it's a static site?</summary><div class="ans">Routing, layouts, TypeScript, code-splitting and a good DX, while <code>output: 'export'</code> produces plain HTML/JS for Pages. Learn content is static JSON loaded client-side.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>What broke on GitHub Pages and how was it fixed?</summary><div class="ans">Pages serves the site under <code>/qrummy/</code> (basePath from an env var) and Next's RSC prefetch requested nested segment files that static hosting 404'd; a postbuild script flattens them to the paths requested (D-075).</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How do animations stay in sync with state?</summary><div class="ans">The server returns <code>{view, events}</code>. The client processes events sequentially with fixed durations (deal stagger, draw, discard, reveal), and only then swaps in the new view.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>How is the hidden AI hand handled in the UI?</summary><div class="ans">The UI never has it: the server sends only <code>handCount</code> until round end. An AI closed draw event has no card. This is enforced and tested server-side, not by hiding things in the client.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>Why custom SVG cards?</summary><div class="ans">No licensing concerns, crisp at any size, animatable, and easy to add badges (wild, locked) and highlights for puzzles.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>How does the coach panel avoid feeling slow?</summary><div class="ans">The hint returns instantly with template text; the Gemini explanation is fetched separately and swapped in when it arrives (8 s timeout).</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How is the cold start handled?</summary><div class="ans">On load the app pings <code>/api/health</code> and shows a ‘waking the AI’ overlay until it answers; a GitHub Actions cron also pings every 10 minutes.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>Accessibility?</summary><div class="ans">Semantic lists and buttons with labels (used by the end-to-end tests too), reduced-motion support via <code>MotionConfig reducedMotion="user"</code>, colour plus icons for state, and a mobile layout with an overlapping hand.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How was it tested?</summary><div class="ans">TypeScript typecheck, and Playwright scripts driving Edge headless against the live site: 32 checks (routes, wording, deal, forfeit window, refresh, guided round, 60 puzzles, strategy, phones, reduced motion, no console errors).</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>Why does refresh start a new game?</summary><div class="ans">Sessions live in server memory and the game id only in React state: no accounts, no persistence, simpler and cheaper. It was an explicit product decision.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-api">
+  <div class="chead">
+    <span class="tag">12 · Serving</span>
+    <h2>Backend API</h2>
+    <code class="files">FastAPI · sessions · AI players</code>
+  </div>
+  <h3>What it is</h3>
+  <p>A FastAPI app (one Uvicorn worker) holding games in memory: create a game, apply a human action then run AI
+ turns until the human must act, return the new view plus events; hints and explanations; health. Every action is
+ re-validated; illegal ones return 409.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Server-authoritative:</b> the client is never trusted; legality and hidden information live only on the server.</li><li><b>In-memory sessions</b> with per-session locks, 2 h idle expiry and an LRU cap of 500, so one worker is required.</li><li><b>Difficulty → policy</b> from <code>model_card.json</code>, with heuristic fallbacks if a model is missing; any illegal model action falls back to the heuristic and is counted.</li><li><b>Information-hiding invariants are tested:</b> no response before round end contains the AI's hand, the draw pile, the CJ (before your reveal) or RNG state.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-api">Expand all</button>
+    <button type="button" data-close="c-api">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why FastAPI?</summary><div class="ans">Async, typed request models with Pydantic, automatic validation and docs, and simple to run with Uvicorn in a small container.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>Why only one worker?</summary><div class="ans">Games live in a Python dict in memory. Multiple workers would each have their own dict and requests would hit the wrong one; scaling out would need Redis or sticky sessions.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How do you prevent cheating?</summary><div class="ans">The client sends intents (draw closed, discard card id); the server checks legality against the engine and builds the response from the human's information set only. Tests assert the AI's hand, draw pile and hidden CJ never appear in any payload before round end.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>What does one POST /actions do?</summary><div class="ans">Lock the session, apply the human action, then loop AI turns (and automatic transitions) until it's the human's decision or the round ends, collecting events; return the human's view plus those events.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>How are concurrent requests on the same game handled?</summary><div class="ans">A per-session asyncio lock serialises them; heavy work runs in a threadpool so the event loop stays responsive.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>How is memory bounded?</summary><div class="ans">Sessions expire after 2 h idle via a cleanup task and the least-recently-used are evicted past 500. A game is a few KB; models are shared and loaded once.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>What happens if a model fails to load?</summary><div class="ans">The level falls back to a heuristic variant and the health endpoint reports <code>model_loaded: false</code>, so the site keeps working.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>How is CORS configured?</summary><div class="ans">Only the GitHub Pages origin (from <code>ALLOWED_ORIGINS</code>) and localhost are allowed.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How was latency measured?</summary><div class="ans">Locally with a TestClient (hint median 65 ms, action 14 ms) and live with a script and Playwright (hint ~0.4 s, action ~0.2 s on 0.1 CPU).</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>How is the API tested?</summary><div class="ans">Full 7-round matches per difficulty, 409 cases, 404 for unknown games, information-hiding invariants on every payload, LLM fallback, the forfeit-ranking regression, and the 50-match legality test.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-coach">
+  <div class="chead">
+    <span class="tag">13 · Serving</span>
+    <h2>Coach & explanations</h2>
+    <code class="files">coach.py · llm.py (Gemini)</code>
+  </div>
+  <h3>What it is</h3>
+  <p>For the human's current decision: win probability now, every legal move ranked (DQN Q-values → preference %,
+ hybrid's pick first), win % after each move from the value net, deterministic reason tags from solver facts, and a
+ template sentence. A separate call asks Gemini to rewrite the facts into ≤ 45 words in the house terminology.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Grounded explanations:</b> the LLM only sees a facts JSON (moves, win %, tags, rummies, loose cards) and is told not to invent anything; template text is always available.</li><li><b>Separate endpoint</b> so the numbers appear instantly and the language arrives when ready (8 s timeout, token bucket 10/min, one in-flight per session, LRU cache by facts hash, replies discarded unless finishReason is STOP).</li><li><b>Hidden cards are sampled, not peeked:</b> the closed-draw win % averages 16 resamples of everything the human can't see.</li><li><b>House terms</b> (rummy, original/first rummy, secondary rummy, loose cards) are enforced in tags, templates, facts and the prompt.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-coach">Expand all</button>
+    <button type="button" data-close="c-coach">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>How is ‘AI preference %’ computed?</summary><div class="ans">softmax(Q/τ) over legal moves with τ = 0.05, from the DQN's Q-values. A small temperature makes the distribution peaked enough to read but still shows near-ties.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>Why put the hybrid's pick first instead of argmax Q?</summary><div class="ans">Against the heuristic the pure DQN wins ~38% and the hybrid ~48%, a 10-point gap. Advising its argmax would sometimes recommend worse moves than the Hard AI plays.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How do you compute win % for a closed draw without cheating?</summary><div class="ans">Determinization: 16 times, shuffle every card the human can't see (AI's unrevealed hand, draw pile, hidden CJ) consistently with known information, apply the draw, evaluate with the value net, and average. The real hidden cards are never used.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>How do you stop the LLM from hallucinating?</summary><div class="ans">It receives only computed facts, is instructed to use only those, has a 45-word limit and low output budget, and the UI labels it. Truncated replies are dropped. If anything fails, the deterministic template is shown.</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>Why Gemini?</summary><div class="ans">Free tier, good speed with the Flash-Lite model, simple REST API. OpenAI was excluded on cost; the code isolates the provider in one module.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>What are the reason tags?</summary><div class="ans">Deterministic labels from solver facts, e.g. completes_original, completes_win, reduces_points:n, sheds_high_card, dead_card:n, opponent_may_want, breaks_rummy, discards_wild, outs:n, points_after:n. They drive both the chips in the UI and the template text.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How did you handle terminology complaints?</summary><div class="ans">The user's house terms replaced ‘meld/deadwood’ in tags, template text, facts keys and the system prompt, which now says never to use ‘meld’ or ‘deadwood’. Test replies used the new terms.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>What's the latency profile?</summary><div class="ans">Hint (numbers + template) ~0.4 s live; Gemini text typically 1–4 s and swapped in; LLM timeout 8 s because Render (Singapore) calls took ~4.2 s at the old 4 s limit.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>Why a regression test for forfeit?</summary><div class="ans">An early version gave Forfeit a flat cost and it topped the ranking; now forfeit is placed just above or below the alternatives based on the heuristic's forfeit rule, and a test checks hints don't push forfeit.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>How would you evaluate explanation quality?</summary><div class="ans">Faithfulness checks (every number and card in the text appears in the facts), user studies on helpfulness, and A/B comparisons between template and LLM text.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+<section class="comp" id="c-deploy">
+  <div class="chead">
+    <span class="tag">14 · Serving</span>
+    <h2>Deployment & CI</h2>
+    <code class="files">Pages · Render · Docker · Actions</code>
+  </div>
+  <h3>What it is</h3>
+  <p>Frontend on GitHub Pages via an Actions workflow; backend as a Docker image on Render's free tier
+ (Singapore, 512 MB, 0.1 CPU) via a <code>render.yaml</code> Blueprint; CI smoke-tests the image; a cron keeps the
+ backend warm. Secrets live in Render's environment. Total cost: $0.</p>
+  <h3>Why it's built this way</h3>
+  <ul class="why"><li><b>Hugging Face Docker Spaces turned out to be paid</b>, so the backend moved to Render (D-084).</li><li><b>NumPy-only image</b> (no torch, no rlcard) to fit 512 MB; CI asserts torch is absent.</li><li><b>Keep-warm cron</b> every 10 minutes plus a client wake overlay for Render's sleep-after-15-minutes.</li><li><b>Internal docs never ship:</b> a git rule keeps SPEC/plan/decisions out of the repo; history was rewritten once to remove them.</li></ul>
+  <div class="qhead"><h3>Top 10 interview questions</h3>
+    <span class="tools"><button type="button" data-open="c-deploy">Expand all</button>
+    <button type="button" data-close="c-deploy">Collapse</button></span></div>
+  <details class="qa"><summary><span class="qn">Q1</span>Why split frontend and backend hosting?</summary><div class="ans">Pages is free and fast for static files but can't run Python. The game needs a server for hidden information, so a free container host runs the API.</div></details>
+<details class="qa"><summary><span class="qn">Q2</span>What does the CI smoke test do?</summary><div class="ans">Build the Docker image, run it, curl <code>/api/health</code>, create a game, request a hint, and assert torch isn't installed.</div></details>
+<details class="qa"><summary><span class="qn">Q3</span>How are secrets managed?</summary><div class="ans">The Gemini key is set in Render's environment (never in git or chat); locally it's in a gitignored <code>.env</code>. The frontend gets only the public API URL as a build variable.</div></details>
+<details class="qa"><summary><span class="qn">Q4</span>What triggers deploys?</summary><div class="ans">Pages: pushes to main touching <code>web/**</code>. Render: auto-deploy on pushes touching server, engine, models, Dockerfile or render.yaml (build filter).</div></details>
+<details class="qa"><summary><span class="qn">Q5</span>How do you handle Render's cold start?</summary><div class="ans">A scheduled GitHub Action pings health every 10 minutes; if it still sleeps, the site shows a wake-up overlay for up to ~2 minutes.</div></details>
+<details class="qa"><summary><span class="qn">Q6</span>What production issue did you hit?</summary><div class="ans">After shipping real models, hints went from ~0.1 s to 3.9 s: OpenBLAS thread oversubscription on a 0.1-CPU quota. Fixed with <code>OPENBLAS_NUM_THREADS=1</code> in the Dockerfile and verified live.</div></details>
+<details class="qa"><summary><span class="qn">Q7</span>How were models shipped?</summary><div class="ans">As small <code>.npz</code> files in the repo (≈6 MB total) with a model card; a push redeploys Render with them.</div></details>
+<details class="qa"><summary><span class="qn">Q8</span>Why rewrite git history?</summary><div class="ans">The user's rule: internal markdown (spec, plan, decision log) must not be public. <code>git filter-branch</code> removed them from all commits and the push used <code>--force-with-lease</code> against the known old tip.</div></details>
+<details class="qa"><summary><span class="qn">Q9</span>How do you know a deploy worked?</summary><div class="ans">Health shows <code>model_loaded</code>/<code>value_loaded</code>/<code>llm_configured</code>; then a live latency probe and the Playwright QA run (32/32) against the real URLs.</div></details>
+<details class="qa"><summary><span class="qn">Q10</span>What would change at real scale?</summary><div class="ans">Multiple workers with sessions in Redis, a paid instance (no sleeping), request-level metrics and tracing, rate limiting per IP, and a CDN in front of the API.</div></details>
+  <p class="back"><a href="#diagram">↑ Back to the diagram</a></p>
+</section>
+
+  <section class="block" id="project">
+    <div class="qhead"><h2>10 questions about the whole project</h2>
+      <span class="tools"><button type="button" data-open="project">Expand all</button>
+      <button type="button" data-close="project">Collapse</button></span></div>
+    <details class="qa"><summary><span class="qn">P1</span>Walk me through the architecture.</summary><div class="ans">A Python rules engine and solver are shared by everything. Offline, an RLCard environment trains a DQN (DQfD imitation of a solver-based heuristic, then self-play RL) and a value network; checkpoints are screened head-to-head and exported to NumPy. Online, a FastAPI server holds games in memory, runs the chosen AI per difficulty and a coach (Q-value rankings, win probability, reason tags, Gemini text), and a static Next.js site on GitHub Pages animates server events.</div></details>
+<details class="qa"><summary><span class="qn">P2</span>What was the hardest technical problem?</summary><div class="ans">Getting RL to improve on the demonstrator. Run A's Q-values diverged (mean 0.37 → 4.84 against a true bound of ±1.5); clipping, Huber and a lower learning rate (run B) and then a CQL penalty (run C) stabilised training but never beat the pretrained network. Diagnosing extrapolation error and deciding to ship the honest result was the core challenge.</div></details>
+<details class="qa"><summary><span class="qn">P3</span>Why is Hard a heuristic and not your RL agent?</summary><div class="ans">Because measurement said so: over 4,000 rounds the heuristic beat the hybrid (48.2%) and the DQN (38.3%). The rule ‘Hard = strongest player’ was set before results were known, which avoids moving the goalposts.</div></details>
+<details class="qa"><summary><span class="qn">P4</span>How do you guarantee the AI doesn't cheat?</summary><div class="ans">The AI's features are built from its own information set; the server re-validates every action and builds each response from the human's information set; tests assert hidden data never appears in payloads; and the coach samples hidden cards instead of reading them.</div></details>
+<details class="qa"><summary><span class="qn">P5</span>How did you test the system end to end?</summary><div class="ans">~280 unit/property tests (rules, solver vs oracle, env, API, NumPy export), a 50-match legality test, head-to-head evaluations with seeds, a CI Docker smoke test, and a Playwright QA run against the deployed site (32 checks).</div></details>
+<details class="qa"><summary><span class="qn">P6</span>What trade-offs did the $0 budget force?</summary><div class="ans">GitHub Pages + Render free tier (cold starts, 0.1 CPU, 512 MB), so: NumPy-only inference, in-memory sessions, keep-warm pings, a free-tier LLM with a template fallback, and models small enough for the repo.</div></details>
+<details class="qa"><summary><span class="qn">P7</span>How did you use an LLM responsibly?</summary><div class="ans">Only for wording: it receives computed facts, has strict instructions and a length limit, truncated replies are dropped, it's rate-limited and cached, and deterministic template text is always shown first.</div></details>
+<details class="qa"><summary><span class="qn">P8</span>What did the evaluation methodology look like?</summary><div class="ans">Seat-alternating fixed-seed matches, illegal-move guards, a two-stage checkpoint screen on fresh seeds to avoid selection bias, standard errors to judge gaps, and calibration (ECE) for the value net on an in-order holdout.</div></details>
+<details class="qa"><summary><span class="qn">P9</span>What would you do with another week?</summary><div class="ans">Try algorithms suited to imperfect information (NFSP, Deep Monte Carlo as in DouZero, or ISMCTS on top of the value net), parallel actors for 10–100× more data, stronger imitation (keep λ high, more demos), human game data for the value net, and persistence/accounts.</div></details>
+<details class="qa"><summary><span class="qn">P10</span>What did you learn?</summary><div class="ans">Strong engineered baselines are hard to beat in combinatorial card games; honest validation splits matter (the first value net looked fine and wasn't); production issues often come from the environment (BLAS threads on a CPU quota); and keeping a decision log made fast pivots explainable.</div></details>
+  </section>
+
+  <section class="block" id="theory">
+    <h2>Theory primer</h2>
+    <p class="lede">The background you need to explain and defend the design: imperfect-information games, value-based deep RL and its
+    failure modes, learning from demonstrations, reward shaping, calibrated prediction, combinatorial search and evaluation statistics.</p>
+    <div class="tgrid"><div class="tcard"><h3>Imperfect-information games</h3><p>Each player sees only part of the state (their hand, public discards). The right object is the <b>information set</b>: all states consistent with what you know. Policies must condition on it, and planning needs either belief modelling or <b>determinization</b> (sampling hidden cards). Formally it's a POMDP from one player's view.</p></div><div class="tcard"><h3>Q-learning and DQN</h3><p>Q(s,a) is the expected return after action a. Q-learning moves Q(s,a) toward r + γ·max<sub>a′</sub>Q(s′,a′) (Bellman optimality). DQN approximates Q with a neural network and stabilises learning with <b>experience replay</b> (decorrelated minibatches) and a <b>target network</b> (frozen copy for targets). <b>Double DQN</b> selects a′ with the online net but evaluates it with the target net to reduce overestimation.</p></div><div class="tcard"><h3>Overestimation, extrapolation error and CQL</h3><p>The max in the target picks actions whose values are noisy, biasing Q upward; with off-distribution actions (little data) this compounds. Clipping targets to the reachable range and Huber loss limit damage; <b>Conservative Q-Learning</b> adds α(logsumexp<sub>a</sub>Q(s,a) − Q(s,a<sub>data</sub>)) to keep Q low on unsupported actions.</p></div><div class="tcard"><h3>Learning from demonstrations (DQfD)</h3><p>Pretrain on expert transitions with TD loss plus a <b>large-margin</b> classification loss that makes the expert action's Q at least a margin above others; keep demonstrations in the replay mix during RL. It solves the cold-start problem of sparse rewards.</p></div><div class="tcard"><h3>Reward shaping</h3><p>Adding F(s,s′) = γΦ(s′) − Φ(s) for any potential Φ leaves optimal policies unchanged (Ng, Harada & Russell 1999) while giving denser feedback. Here Φ is minus normalised points (or an original-outs term before the original).</p></div><div class="tcard"><h3>Self-play and non-stationarity</h3><p>When the opponent learns too, the environment changes; mixing the current policy, frozen snapshots and a fixed heuristic in an opponent pool reduces cycling and forgetting.</p></div><div class="tcard"><h3>Probabilistic prediction and calibration</h3><p>A sigmoid output trained with binary cross-entropy estimates P(win). <b>ECE</b> measures calibration by binning predictions; <b>temperature scaling</b> fits one scalar on validation logits to fix over/under-confidence. Validation must be split by game/time, not by state, to avoid leakage.</p></div><div class="tcard"><h3>Combinatorial search</h3><p>Partitioning a hand into valid groups is a set-partition / exact-cover problem. Precomputed patterns, branching on one card at a time and <b>memoisation</b> over count vectors (dynamic programming) make it fast; a brute-force <b>oracle</b> verifies correctness.</p></div><div class="tcard"><h3>Statistics of evaluation</h3><p>A win rate over n games has standard error √(p(1−p)/n). Alternate seats to remove first-mover bias, use fixed seeds for paired comparisons, and confirm a selected best model on fresh data to avoid the winner's curse.</p></div><div class="tcard"><h3>Explainable AI</h3><p>Post-hoc explanation of a policy: expose its scores (Q-values as preferences), an outcome model (win probability), and human-readable reasons derived deterministically from the domain; an LLM is used only to phrase grounded facts.</p></div></div>
+  </section>
+
+  <section class="block" id="theory-qa">
+    <div class="qhead"><h2>15 theory questions</h2>
+      <span class="tools"><button type="button" data-open="theory-qa">Expand all</button>
+      <button type="button" data-close="theory-qa">Collapse</button></span></div>
+    <details class="qa"><summary><span class="qn">T1</span>What is the Bellman optimality equation for Q?</summary><div class="ans">Q*(s,a) = E[r + γ·max<sub>a′</sub> Q*(s′,a′) | s,a]. Q-learning is stochastic approximation toward this fixed point; DQN regresses a network onto the right-hand side computed with a target network.</div></details>
+<details class="qa"><summary><span class="qn">T2</span>Why does DQN need experience replay and a target network?</summary><div class="ans">Consecutive transitions are highly correlated and the regression target moves with the network; replay samples decorrelated minibatches and reuses data, and the target network holds the bootstrapped target fixed for many steps, which prevents feedback loops.</div></details>
+<details class="qa"><summary><span class="qn">T3</span>What problem does Double DQN solve?</summary><div class="ans">max over noisy estimates is biased upward (E[max] ≥ max E). Double DQN decouples action selection (online net) from evaluation (target net), reducing that bias.</div></details>
+<details class="qa"><summary><span class="qn">T4</span>What is extrapolation error?</summary><div class="ans">In off-policy / offline RL, the TD target queries Q at actions poorly covered by the data; the network's guesses there are arbitrary and the max picks the optimistic ones, so errors propagate and inflate values. It's what sank run A.</div></details>
+<details class="qa"><summary><span class="qn">T5</span>How does CQL counteract it?</summary><div class="ans">It adds a regulariser that minimises a soft-max (logsumexp) of Q over actions while maximising Q on dataset actions, producing a lower bound-ish Q that doesn't favour unsupported actions.</div></details>
+<details class="qa"><summary><span class="qn">T6</span>Why is potential-based shaping policy-invariant?</summary><div class="ans">The shaping terms telescope along any trajectory to γ<sup>T</sup>Φ(s<sub>T</sub>) − Φ(s<sub>0</sub>), a quantity independent of the actions chosen in between (with Φ(terminal) = 0), so the ranking of policies by return is unchanged.</div></details>
+<details class="qa"><summary><span class="qn">T7</span>What is the DQfD large-margin loss?</summary><div class="ans">J<sub>E</sub>(Q) = max<sub>a</sub>[Q(s,a) + l(a<sub>E</sub>,a)] − Q(s,a<sub>E</sub>), where l is a margin (0.8 here) for a ≠ a<sub>E</sub>. It's zero only when the expert action beats every other by the margin, giving Q-values a grounded ranking.</div></details>
+<details class="qa"><summary><span class="qn">T8</span>What is an information set and why does it matter for card games?</summary><div class="ans">The set of game states a player can't distinguish given their observations. Policies must be functions of information sets; otherwise they implicitly use hidden cards. The coach also evaluates moves by averaging over states in the human's information set.</div></details>
+<details class="qa"><summary><span class="qn">T9</span>What is determinization and its weakness?</summary><div class="ans">Sample concrete hidden states consistent with your information and evaluate/plan in each, then average. It's cheap and unbiased for evaluation, but planning with it can suffer ‘strategy fusion’ (assuming you'll know the hidden cards later).</div></details>
+<details class="qa"><summary><span class="qn">T10</span>Why ε-greedy, and what are alternatives?</summary><div class="ans">Simple exploration: random legal action with probability ε. Alternatives: Boltzmann/softmax exploration, noisy networks, count-based bonuses, or population diversity in opponents.</div></details>
+<details class="qa"><summary><span class="qn">T11</span>Huber vs MSE loss for TD learning?</summary><div class="ans">Huber is quadratic near zero and linear for large errors, so a few huge TD errors (from bad targets) don't dominate gradients; it's more robust to outliers than MSE.</div></details>
+<details class="qa"><summary><span class="qn">T12</span>What is Expected Calibration Error?</summary><div class="ans">Partition predictions into bins; ECE = Σ<sub>b</sub> (n<sub>b</sub>/N)·|acc(b) − conf(b)|. Lower is better; it's the average gap between predicted probability and observed frequency.</div></details>
+<details class="qa"><summary><span class="qn">T13</span>How does temperature scaling work and why does it not change accuracy?</summary><div class="ans">Replace logit z with z/T and fit T on validation NLL. Dividing by a positive constant preserves the sign of the logit (and the ordering of scores), so the 0.5 threshold decision and ranking don't change, only confidence.</div></details>
+<details class="qa"><summary><span class="qn">T14</span>How many games do you need to detect a 3-point win-rate difference?</summary><div class="ans">SE of a difference of two independent rates ≈ √(2·0.25/n). For it to be ~1 point (so 3 points ≈ 3 SE), n ≈ 5,000 per agent. Paired/seeded designs reduce the requirement.</div></details>
+<details class="qa"><summary><span class="qn">T15</span>What makes memoised search efficient for hand arrangement?</summary><div class="ans">Many branch orders lead to the same residual multiset of cards; caching the best result per (residual counts, wilds, slots) turns an exponential tree into a DAG over distinct residual states, which is small because hands are 13–14 cards over 53 types.</div></details>
+  </section>
+
+  <footer>QRummy · built with RLCard (Zha et al., IJCAI 2020) · numbers from the shipped models' evaluations (4,000 rounds per agent, seats alternating).</footer>
+</main>
+<script>
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-open], button[data-close]");
+  if (!b) return;
+  const id = b.dataset.open || b.dataset.close;
+  document.querySelectorAll(`#${id} details`).forEach((d) => (d.open = !!b.dataset.open));
+});
+</script>
+</body>
+</html>
