@@ -14,6 +14,7 @@ import numpy as np
 
 from indian_rummy import actions as A
 from indian_rummy.agents.heuristic import HeuristicAgent, heuristic_reveal
+from indian_rummy.agents.hybrid import HybridPolicy
 from indian_rummy.cards import JOKER, SUITS, base_points, rank_of, suit_of, type_code
 from indian_rummy.features import Analysis, analyse, encode
 from indian_rummy.game import Phase, RummyGame
@@ -218,6 +219,9 @@ class Coach:
         if dqn is not None:
             qd = dqn.masked_q(obs, legal)
             q = np.array([qd[a] for a in legal])
+            # The hybrid's move goes first: the raw DQN's argmax plays much weaker discards (D-096).
+            pick = HybridPolicy(dqn).act_analysis(an, obs)
+            q[legal.index(pick)] = q.max() + 1e-3
         else:  # heuristic preference as pseudo-Q
             q = -self._heuristic_costs(an, legal) / 20.0
         pref = softmax(q, TAU)

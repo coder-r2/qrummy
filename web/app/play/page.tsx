@@ -8,8 +8,8 @@ import { useGame } from "@/lib/useGame";
 
 const LEVELS: { id: Difficulty; name: string; blurb: string }[] = [
   { id: "easy", name: "Easy", blurb: "A casual player who makes plenty of mistakes." },
-  { id: "medium", name: "Medium", blurb: "Solid fundamentals, occasionally careless." },
-  { id: "hard", name: "Hard", blurb: "The strongest AI we trained. Good luck." },
+  { id: "medium", name: "Medium", blurb: "The trained neural network playing on its own. Solid, sometimes careless." },
+  { id: "hard", name: "Hard", blurb: "Our strongest player: the expert strategy the network learned from. Good luck." },
 ];
 
 export default function Play() {

@@ -12,6 +12,7 @@ __pycache__/
 training/data/
 training/logs/
 models/checkpoints/
+models/*.pth
 
 # Web
 web/node_modules/

@@ -67,9 +67,10 @@ def main():
     n = len(Y)
     print(f"{n} states, win rate {Y.mean():.3f}, loaded in {time.time() - t0:.0f}s")
     rng = np.random.RandomState(0)
-    perm = rng.permutation(n)
+    # Shards are in play order, so holding out the tail keeps a round's states on one side of the split
+    # (a random per-state split leaks near-duplicate positions into validation and flatters the ECE).
     n_val = max(1000, n // 10)
-    val, tr = perm[:n_val], perm[n_val:]
+    val, tr = np.arange(n - n_val, n), np.arange(n - n_val)
     dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     layers = tuple(int(x) for x in args.layers.split(","))
     net = ValueNet(OBS_DIM, layers).to(dev)
@@ -93,6 +94,7 @@ def main():
                 ps.append(p.cpu().numpy()); preds.append(sc.cpu().numpy())
         return np.concatenate(logits), np.concatenate(ys), np.concatenate(ps), np.concatenate(preds)
 
+    best = (float("inf"), -1, None)
     for ep in range(args.epochs):
         net.train()
         tot = 0.0
@@ -106,15 +108,20 @@ def main():
         lg, y, p, sc = evaluate_split(val)
         prob = 1 / (1 + np.exp(-lg))
         acc = ((prob > 0.5) == (y > 0.5)).mean()
-        print(f"epoch {ep}: train loss {tot / len(tr):.4f} | val acc {acc:.3f} ece {ece(prob, y):.4f} "
-              f"score mse {np.mean((sc - p) ** 2):.4f}", flush=True)
+        val_loss = float(F.binary_cross_entropy_with_logits(torch.from_numpy(lg), torch.from_numpy(y)))
+        print(f"epoch {ep}: train loss {tot / len(tr):.4f} | val bce {val_loss:.4f} acc {acc:.3f} "
+              f"ece {ece(prob, y):.4f} score mse {np.mean((sc - p) ** 2):.4f}", flush=True)
+        if val_loss < best[0]:  # keep the epoch that generalises best; the net overfits quickly
+            best = (val_loss, ep, {k: v.detach().clone() for k, v in net.state_dict().items()})
 
+    print(f"keeping epoch {best[1]} (val bce {best[0]:.4f})")
+    net.load_state_dict(best[2])
     lg, y, p, sc = evaluate_split(val)
     e_before = ece(1 / (1 + np.exp(-lg)), y)
     T = fit_temperature(lg, y)
     e_after = ece(1 / (1 + np.exp(-lg / T)), y)
     meta = {"obs_dim": OBS_DIM, "layers": list(layers), "feature_version": FEATURE_VERSION,
-            "temperature": T, "ece_before": e_before, "ece_after": e_after, "n_train": int(len(tr)),
+            "temperature": T, "best_epoch": best[1], "ece_before": e_before, "ece_after": e_after, "n_train": int(len(tr)),
             "n_val": int(n_val), "val_win_rate": float(y.mean()), "data": args.data,
             "trained_at": time.strftime("%Y-%m-%d %H:%M:%S")}
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)

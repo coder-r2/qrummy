@@ -14,7 +14,7 @@ const FAN: Card[] = [
 ];
 
 const FEATURES = [
-  { title: "A real RL opponent", body: "A Deep Q-Network trained with RLCard by self-play and from demonstrations, running in the cloud." },
+  { title: "A real RL opponent", body: "A Deep Q-Network trained with RLCard from expert demonstrations and self-play, running in the cloud." },
   { title: "A coach that explains", body: "Win probability, a ranking of every legal move and a plain-English reason, updated on every turn." },
   { title: "House rules, enforced", body: "3 decks + 6 jokers, 13-card hands, strict 3/3/3/4, the closed joker and the first-rummy rule." },
 ];
@@ -79,7 +79,7 @@ export default function Home() {
         <ol className="grid md:grid-cols-4 gap-4 text-sm">
           {[
             ["Rules engine", "A Python engine validates every meld, joker and phase rule; a fast solver finds the best arrangement of any hand."],
-            ["Learning", "The DQN first imitates a strong hand-written strategy, then improves by playing itself and earlier versions of itself."],
+            ["Learning", "The DQN learns by imitating a strong hand-written strategy, then plays itself. In our tests the imitation stage gave the strongest network, so that is the one you meet."],
             ["Decisions", "Each turn it scores every legal draw and discard (its Q-values) from what it can legally see — never your cards."],
             ["Coaching", "A separate value network estimates your win chance; Gemini turns the facts into a short explanation."],
           ].map(([t, b], i) => (

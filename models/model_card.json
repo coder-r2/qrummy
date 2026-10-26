@@ -1,0 +1,15 @@
+{
+  "levels": {
+    "easy": {"type": "heuristic", "epsilon": 0.35, "forfeit": false},
+    "medium": {"type": "dqn", "checkpoint": "models/dqn_model.npz"},
+    "hard": {"type": "heuristic", "epsilon": 0.0, "forfeit": true}
+  },
+  "coach": {"dqn": "models/dqn_model.npz", "value": "models/value_model.npz"},
+  "provenance": {
+    "dqn": "models/checkpoints/C/pretrained.pt (DQfD pretraining, before RL; best of 20 checkpoints across runs A/B/C)",
+    "value": "training/data/C, 446k states, best epoch 0, temperature 1.05, held-out ECE 0.020, accuracy 0.644",
+    "eval_vs_heuristic_4000_rounds_seed_4242": {
+      "heuristic": 0.513, "hybrid": 0.469, "heuristic_eps_0.15": 0.405, "dqn": 0.350, "heuristic_eps_0.30": 0.297
+    }
+  }
+}
