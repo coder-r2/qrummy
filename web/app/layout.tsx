@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="https://github.com/datamllab/rlcard" className="underline hover:text-ink" target="_blank" rel="noreferrer">
             RLCard
           </a>{" "}
-          (Zha et al., IJCAI 2020) · $0 build
+          (Zha et al., IJCAI 2020) · MIT-licensed, $0 build
         </footer>
       </body>
     </html>

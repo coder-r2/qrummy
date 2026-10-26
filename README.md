@@ -134,3 +134,7 @@ If you build on this work, please cite RLCard:
 - **Backend:** Render builds the root `Dockerfile` from `render.yaml` (Python slim, NumPy, no torch).
   - `backend-image.yml` smoke-tests the image in CI.
   - `keep-warm.yml` pings the API every 10 minutes so the free instance stays awake.
+
+## License
+
+[MIT](LICENSE) © 2026 Rishe. RLCard, which this project builds on, is also MIT-licensed.
